@@ -60,7 +60,6 @@ export default function Dashboard() {
               {roleInfo?.title ?? role}
             </span>
           </div>
-          <p className="text-text-secondary">Fleet operations dashboard — real-time overview.</p>
         </div>
 
         {/* Live Status pill */}

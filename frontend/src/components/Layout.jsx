@@ -66,15 +66,10 @@ export default function Layout() {
               <PageIcon className="w-4 h-4" style={{ color: ACCENT }} />
             </div>
 
-            {/* Label + subtle breadcrumb prefix */}
-            <div className="flex flex-col justify-center leading-none">
-              <span className="text-[10px] uppercase tracking-[0.12em] font-bold" style={{ color: '#B8AEA2' }}>
-                TransitOps
-              </span>
-              <span className="font-fraunces font-bold text-[1.05rem] tracking-tight mt-0.5" style={{ color: '#1C2333' }}>
-                {meta.label}
-              </span>
-            </div>
+            {/* Page title */}
+            <span className="font-fraunces font-bold text-[1.1rem] tracking-tight" style={{ color: '#1C2333' }}>
+              {meta.label}
+            </span>
           </div>
 
           {/* User info */}
