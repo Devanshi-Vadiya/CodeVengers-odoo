@@ -86,7 +86,7 @@ export default function Trips() {
         {canAction && (
           <button
             onClick={() => setFormOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-accent-signal hover:bg-orange-500 rounded-xl transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50"
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-accent-signal hover:bg-blue-400 rounded-xl transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50"
           >
             <Plus className="w-4 h-4" /> Create Trip
           </button>

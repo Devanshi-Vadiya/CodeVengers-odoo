@@ -79,7 +79,7 @@ function StatCard({ title, value, icon: Icon, urgent = false, urgentColor = 'tex
   const cardBorder = isUrgent ? urgentBorder : 'border-surface-raised';
 
   return (
-    <div className={`bg-surface rounded-2xl p-5 border transition-all ${cardBorder} ${isUrgent ? 'shadow-[0_0_15px_rgba(249,112,102,0.15)]' : 'shadow-none'}`}>
+    <div className={`bg-surface rounded-2xl p-5 border transition-all ${cardBorder} ${isUrgent ? 'shadow-[0_0_15px_rgba(245,158,11,0.15)]' : 'shadow-none'}`}>
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${iconBg} ${iconColor}`}>
         <Icon className="w-5 h-5" />
       </div>

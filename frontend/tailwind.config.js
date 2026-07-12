@@ -7,15 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: 'rgb(var(--bg-base) / <alpha-value>)',
-        surface: 'rgb(var(--surface) / <alpha-value>)',
-        'surface-raised': 'rgb(var(--surface-raised) / <alpha-value>)',
-        'accent-signal': 'rgb(var(--accent-signal) / <alpha-value>)',
-        'status-available': 'rgb(var(--status-available) / <alpha-value>)',
-        'status-shop': 'rgb(var(--status-shop) / <alpha-value>)',
-        'status-retired': 'rgb(var(--status-retired) / <alpha-value>)',
-        'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',
-        'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
+        base: '#0A0A0B',
+        surface: '#121214',
+        'surface-raised': '#27272A',
+        'accent-signal': '#3B82F6', /* Vibrant Blue for actions */
+        'status-available': '#10B981', /* Emerald */
+        'status-shop': '#F59E0B', /* Amber */
+        'status-retired': '#52525B', /* Zinc 600 */
+        'text-primary': '#FAFAFA', /* Zinc 50 */
+        'text-secondary': '#A1A1AA', /* Zinc 400 */
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
