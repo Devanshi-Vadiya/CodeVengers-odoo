@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Wallet, ChevronDown, Check, AlertCircle, X } from 'lucide-react';
 import { useFinance } from '../hooks/useFinance';
 import CostSummaryCard from '../components/finance/CostSummaryCard';
@@ -30,6 +30,85 @@ function Toast({ message, type, onClose }) {
   );
 }
 
+// Fully custom dark dropdown — avoids the browser's native white popup
+function VehicleDropdown({ vehicles, selected, onSelect }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative min-w-[260px]">
+      {/* Trigger */}
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        style={{
+          backgroundColor: '#121F38',
+          border: '1px solid #22335A',
+          color: selected ? '#F5F6F8' : '#8B9BB8'
+        }}
+        className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal hover:border-accent-signal/50"
+      >
+        <Wallet className="w-4 h-4 text-accent-signal shrink-0" />
+        <span className="flex-1 text-left truncate">
+          {selected ? `${selected.reg_number} — ${selected.name}` : 'Select a vehicle…'}
+        </span>
+        <ChevronDown
+          className="w-4 h-4 text-text-secondary shrink-0 transition-transform duration-200"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        />
+      </button>
+
+      {/* Menu */}
+      {open && (
+        <div
+          style={{
+            backgroundColor: '#121F38',
+            border: '1px solid #22335A',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}
+          className="absolute z-50 top-full mt-1.5 w-full rounded-xl overflow-hidden"
+        >
+          {/* Empty option */}
+          <button
+            type="button"
+            onClick={() => { onSelect(null); setOpen(false); }}
+            style={{ color: '#8B9BB8' }}
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-[#16274A] transition-colors text-left"
+          >
+            <span className="w-4 h-4 shrink-0" />
+            Select a vehicle…
+          </button>
+          {/* Divider */}
+          <div style={{ borderTop: '1px solid #22335A' }} />
+          {vehicles.map(v => (
+            <button
+              key={v.id}
+              type="button"
+              onClick={() => { onSelect(v); setOpen(false); }}
+              style={{ color: selected?.id === v.id ? '#F5A623' : '#F5F6F8' }}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-[#16274A] transition-colors text-left"
+            >
+              <Check
+                className="w-4 h-4 shrink-0"
+                style={{ opacity: selected?.id === v.id ? 1 : 0, color: '#F5A623' }}
+              />
+              <span className="font-mono font-semibold">{v.reg_number}</span>
+              <span style={{ color: '#8B9BB8' }}>— {v.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function FinancePage() {
   const [vehicles] = useState(MOCK_VEHICLES);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
@@ -54,7 +133,6 @@ export default function FinancePage() {
     try {
       setFuelLoading(true);
       await submitFuelLog(data);
-      // Refetch costs for the selected vehicle
       if (selectedVehicle) await fetchCosts(selectedVehicle.id);
       showToast(`Fuel log added for ${selectedVehicle?.reg_number} — $${Number(data.cost).toFixed(2)}`);
     } catch (err) {
@@ -68,7 +146,6 @@ export default function FinancePage() {
     try {
       setExpenseLoading(true);
       await submitExpense(data);
-      // Refetch costs for the selected vehicle
       if (selectedVehicle) await fetchCosts(selectedVehicle.id);
       showToast(`${data.type} expense of $${Number(data.amount).toFixed(2)} logged for ${selectedVehicle?.reg_number}`);
     } catch (err) {
@@ -87,28 +164,12 @@ export default function FinancePage() {
           <p className="text-text-secondary mt-1">Track fuel costs and operational expenses per vehicle.</p>
         </div>
 
-        {/* Vehicle Selector */}
-        <div className="relative min-w-[240px]">
-          <div className="flex items-center gap-2 panel px-4 py-2.5 rounded-xl cursor-pointer">
-            <Wallet className="w-4 h-4 text-accent-signal shrink-0" />
-            <select
-              value={selectedVehicle?.id || ''}
-              onChange={e => {
-                const v = vehicles.find(v => String(v.id) === e.target.value);
-                setSelectedVehicle(v || null);
-              }}
-              className="flex-1 bg-transparent text-sm font-medium text-text-primary focus:outline-none appearance-none cursor-pointer"
-            >
-              <option value="">Select a vehicle…</option>
-              {vehicles.map(v => (
-                <option key={v.id} value={v.id}>
-                  {v.reg_number} — {v.name}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="w-4 h-4 text-text-secondary shrink-0 pointer-events-none" />
-          </div>
-        </div>
+        {/* Vehicle Selector — fully custom dark dropdown */}
+        <VehicleDropdown
+          vehicles={vehicles}
+          selected={selectedVehicle}
+          onSelect={setSelectedVehicle}
+        />
       </div>
 
       {/* Cost Summary */}
@@ -138,3 +199,4 @@ export default function FinancePage() {
     </div>
   );
 }
+
