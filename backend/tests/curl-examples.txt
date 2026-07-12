@@ -1,4 +1,8 @@
-## TransitOps Auth API Test Examples
+## TransitOps API Test Examples
+
+# ------------------------------
+# Auth API Examples
+# ------------------------------
 
 # 1. Signup - Create a fleet manager
 curl -X POST http://localhost:5000/api/auth/signup \
@@ -34,4 +38,50 @@ curl -X GET http://localhost:5000/api/auth/me \
 
 # 5. Logout - Replace <YOUR_TOKEN>
 curl -X POST http://localhost:5000/api/auth/logout \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+
+# ------------------------------
+# Trip Management API Examples (Replace <YOUR_TOKEN>, <TRIP_ID>, <VEHICLE_ID>, <DRIVER_ID> as needed)
+# ------------------------------
+
+# 6. Create Trip (fleet_manager or driver)
+curl -X POST http://localhost:5000/api/trips \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_TOKEN>" \
+  -d '{
+    "source": "Warehouse A",
+    "destination": "Store B",
+    "vehicle_id": <VEHICLE_ID>,
+    "driver_id": <DRIVER_ID>,
+    "cargo_weight": 1500,
+    "planned_distance": 150
+  }'
+
+# 7. Get All Trips (all roles) - Optional query params: status, vehicle_id, driver_id
+curl -X GET http://localhost:5000/api/trips \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+
+# 8. Get Trip by ID (all roles)
+curl -X GET http://localhost:5000/api/trips/<TRIP_ID> \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+
+# 9. Dispatch Trip (fleet_manager or driver)
+curl -X PATCH http://localhost:5000/api/trips/<TRIP_ID>/dispatch \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+
+# 10. Complete Trip (fleet_manager or driver)
+curl -X PATCH http://localhost:5000/api/trips/<TRIP_ID>/complete \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <YOUR_TOKEN>" \
+  -d '{
+    "actual_distance": 155,
+    "fuel_consumed": 35.5
+  }'
+
+# 11. Cancel Trip (fleet_manager or driver)
+curl -X PATCH http://localhost:5000/api/trips/<TRIP_ID>/cancel \
+  -H "Authorization: Bearer <YOUR_TOKEN>"
+
+# 12. Delete Trip (fleet_manager only, only if status=draft)
+curl -X DELETE http://localhost:5000/api/trips/<TRIP_ID> \
   -H "Authorization: Bearer <YOUR_TOKEN>"
