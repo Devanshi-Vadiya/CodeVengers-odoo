@@ -51,7 +51,7 @@ export default function MaintenancePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-display font-bold text-text-primary tracking-tight">Maintenance</h1>
+          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight">Predictive <em style={{ fontStyle: 'italic', fontWeight: 600 }}>Maintenance</em></h1>
           <p className="text-text-secondary mt-1">Track and manage vehicle repairs and inspections.</p>
         </div>
         {canAction && (

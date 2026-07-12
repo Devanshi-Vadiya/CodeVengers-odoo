@@ -47,8 +47,11 @@ export default function Dashboard() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 flex-wrap mb-2">
-            <h1 className="text-3xl font-display font-bold text-text-primary tracking-tight">
-              Welcome back, {user?.name?.split(' ')[0] || 'User'}!
+            <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight">
+              Welcome back,{' '}
+              <em className="not-italic" style={{ fontStyle: 'italic', color: '#F5A623', fontWeight: 600 }}>
+                {user?.name?.split(' ')[0] || 'User'}!
+              </em>
             </h1>
             <span
               className="text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full border"

@@ -31,9 +31,10 @@ export default {
         'status-cancelled':  '#F43F5E',
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        sans:    ['Inter',           'sans-serif'],
-        mono:    ['"JetBrains Mono"','monospace' ],
+        display:   ['"Space Grotesk"', 'sans-serif'],
+        fraunces:  ['"Fraunces"',      'serif'],
+        sans:      ['Inter',           'sans-serif'],
+        mono:      ['"JetBrains Mono"','monospace' ],
       },
       backgroundImage: {
         // Warm amber-cream hero band — echoes the amber brand accent

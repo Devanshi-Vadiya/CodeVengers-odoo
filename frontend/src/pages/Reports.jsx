@@ -152,7 +152,7 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-text-primary tracking-tight">Reports</h1>
+          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight"><em style={{ fontStyle: 'italic', fontWeight: 600 }}>Fleet</em> Reports</h1>
           <p className="text-text-secondary mt-1">Analyse fleet performance, costs, and ROI.</p>
         </div>
         <button

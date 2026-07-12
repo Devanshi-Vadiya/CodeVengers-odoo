@@ -161,7 +161,7 @@ export default function FinancePage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-text-primary tracking-tight">Finance</h1>
+          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight">Fleet <em style={{ fontStyle: 'italic', fontWeight: 600 }}>Finance</em></h1>
           <p className="text-text-secondary mt-1">Track fuel costs and operational expenses per vehicle.</p>
         </div>
 
