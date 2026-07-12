@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const authRoutes = require('./routes/auth.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -12,6 +13,9 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+app.use('/api/auth', authRoutes);
+
 // Test route
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { message: 'TransitOps API is running!' } });
@@ -21,3 +25,4 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 module.exports = app;
+
