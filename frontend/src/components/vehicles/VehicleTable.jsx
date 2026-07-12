@@ -13,11 +13,11 @@ const COLUMNS = [
 // Skeleton row for loading state
 export function VehicleTableSkeleton() {
   return (
-    <div className="bg-surface rounded-2xl border border-surface-raised overflow-hidden">
+    <div className="panel overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-surface-raised bg-surface-raised/30">
+            <tr className="border-b border-app-border bg-base-mid/50">
               {COLUMNS.map(c => (
                 <th key={c.key} className="px-5 py-3.5 text-left text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   {c.label}
@@ -28,7 +28,7 @@ export function VehicleTableSkeleton() {
           </thead>
           <tbody>
             {Array.from({ length: 5 }).map((_, i) => (
-              <tr key={i} className="border-b border-surface-raised/50">
+              <tr key={i} className="border-b border-app-border/50">
                 {COLUMNS.map(c => (
                   <td key={c.key} className="px-5 py-4">
                     <div className="h-4 bg-surface-raised rounded-lg animate-pulse" style={{ width: c.key === 'status' ? '80px' : '100%' }} />
@@ -69,11 +69,11 @@ export default function VehicleTable({ vehicles, canEdit, onEdit }) {
   });
 
   return (
-    <div className="bg-surface rounded-2xl border border-surface-raised overflow-hidden shadow-sm">
+    <div className="panel overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-surface-raised bg-surface-raised/30">
+            <tr className="border-b border-app-border bg-base-mid/50">
               {COLUMNS.map(col => (
                 <th
                   key={col.key}
@@ -92,7 +92,7 @@ export default function VehicleTable({ vehicles, canEdit, onEdit }) {
               {canEdit && <th className="px-5 py-3.5 text-right text-xs font-semibold text-text-secondary uppercase tracking-wider">Actions</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-surface-raised/50">
+          <tbody className="divide-y divide-app-border/50">
             {sorted.map(vehicle => (
               <tr
                 key={vehicle.id}
