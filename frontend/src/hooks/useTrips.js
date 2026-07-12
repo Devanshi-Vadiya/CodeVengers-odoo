@@ -81,7 +81,8 @@ export function useTrips(params = {}) {
       setTrips(data);
     } catch (err) {
       console.warn('[useTrips] Backend unavailable, using mock data:', err.message);
-      setTrips(MOCK_TRIPS);
+      // Only set mock data initially if trips is empty, to preserve local state mutations
+      setTrips(prev => prev.length ? prev : [...MOCK_TRIPS]);
     } finally {
       setLoading(false);
     }
@@ -98,13 +99,41 @@ export function useTrips(params = {}) {
     return { ...trip, vehicle, driver };
   }, [vehicles, drivers]);
 
+  // Mocked actions for UI demo without backend
+  const dispatchTrip = async (id) => {
+    try {
+      await tripService.dispatch(id);
+    } catch (err) {
+      console.warn('Backend failed, mocking dispatch locally');
+      setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'dispatched' } : t));
+    }
+  };
+
+  const completeTrip = async (id, data) => {
+    try {
+      await tripService.complete(id, data);
+    } catch (err) {
+      console.warn('Backend failed, mocking complete locally');
+      setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'completed', ...data } : t));
+    }
+  };
+
+  const cancelTrip = async (id) => {
+    try {
+      await tripService.cancel(id);
+    } catch (err) {
+      console.warn('Backend failed, mocking cancel locally');
+      setTrips(prev => prev.map(t => t.id === id ? { ...t, status: 'cancelled' } : t));
+    }
+  };
+
   return { 
     trips: trips.map(enrichTrip), 
     loading, 
     error, 
     refetch: fetchTrips,
-    dispatchTrip: tripService.dispatch,
-    completeTrip: tripService.complete,
-    cancelTrip: tripService.cancel
+    dispatchTrip,
+    completeTrip,
+    cancelTrip
   };
 }
