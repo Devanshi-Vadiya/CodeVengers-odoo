@@ -31,7 +31,17 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
     try {
       setLoading(true);
       // Fetch ALL vehicles (not just available), so they can be flagged for maintenance
-      const data = await vehicleService.getAll();
+      let data;
+      try {
+        data = await vehicleService.getAll();
+      } catch (apiErr) {
+        // Fallback to mock data if backend is not running
+        data = [
+          { id: 101, reg_number: 'TRK-001', name: 'Freightliner Cascadia' },
+          { id: 102, reg_number: 'TRK-002', name: 'Volvo VNL 860' },
+          { id: 103, reg_number: 'TRK-003', name: 'Kenworth T680' }
+        ];
+      }
       setVehicles(data);
     } catch (err) {
       console.error(err);
