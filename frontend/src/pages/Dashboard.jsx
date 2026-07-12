@@ -95,6 +95,7 @@ export default function Dashboard() {
                 value={formatValue(stats?.[def.key], def.format)}
                 icon={def.icon}
                 accent={def.accent}
+                fmt={def.format}
               />
             ))}
       </div>

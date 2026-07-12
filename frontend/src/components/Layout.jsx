@@ -93,11 +93,11 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* ── Main Content ── */}
+      {/* ── Main Content — page-enter fade on route change ── */}
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-auto p-8" style={{ background: 'transparent' }}>
-          <div className="max-w-7xl mx-auto h-full">
+          <div key={location.pathname} className="max-w-7xl mx-auto h-full page-enter">
             <Outlet />
           </div>
         </main>

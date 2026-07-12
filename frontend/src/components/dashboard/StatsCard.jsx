@@ -1,7 +1,5 @@
-/**
- * StatsCard — reusable KPI tile used 7× on the Dashboard.
- * Shows a skeleton when loading prop is true.
- */
+import { useCountUp } from '../../hooks/useCountUp';
+
 export function StatsCardSkeleton() {
   return (
     <div className="panel p-6 animate-pulse">
@@ -12,7 +10,19 @@ export function StatsCardSkeleton() {
   );
 }
 
-export default function StatsCard({ label, value, icon: Icon, accent, trend }) {
+// Inner component that receives already-parsed numeric target
+function CountUpValue({ raw, fmt }) {
+  // Parse numeric part from formatted value (e.g. "$3,840" → 3840, "94%" → 94)
+  const stripped = String(raw).replace(/[^0-9.]/g, '');
+  const num = parseFloat(stripped);
+  const counted = useCountUp(isNaN(num) ? 0 : num, 500);
+
+  if (fmt === 'currency') return `$${counted.toLocaleString()}`;
+  if (fmt === 'pct') return `${counted}%`;
+  return String(counted);
+}
+
+export default function StatsCard({ label, value, icon: Icon, accent, fmt }) {
   const MAP = {
     amber:   { iconBg: 'rgba(245,166,35,0.12)',  iconColor: '#F5A623', border: 'rgba(245,166,35,0.25)'  },
     blue:    { iconBg: 'rgba(59,130,246,0.12)',  iconColor: '#3B82F6', border: 'rgba(59,130,246,0.25)'  },
@@ -23,15 +33,19 @@ export default function StatsCard({ label, value, icon: Icon, accent, trend }) {
 
   const { iconBg, iconColor, border } = MAP[accent] ?? MAP.neutral;
 
+  // Detect whether this value is numeric (suitable for count-up)
+  const stripped = String(value).replace(/[^0-9.]/g, '');
+  const isNumeric = stripped !== '' && !isNaN(parseFloat(stripped));
+
   return (
     <div
-      className="flex flex-col rounded-2xl p-6 transition-all hover:-translate-y-0.5 group cursor-default bg-white"
+      className="flex flex-col rounded-2xl p-6 transition-all hover:-translate-y-0.5 group cursor-default bg-white content-reveal"
       style={{
         border: `1px solid ${border}`,
         boxShadow: '0 1px 3px rgba(28,35,51,0.08), 0 1px 2px rgba(28,35,51,0.04)',
       }}
     >
-      {/* Icon */}
+      {/* Icon chip */}
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-105"
         style={{ backgroundColor: iconBg }}
@@ -39,26 +53,16 @@ export default function StatsCard({ label, value, icon: Icon, accent, trend }) {
         <Icon className="w-6 h-6" style={{ color: iconColor }} />
       </div>
 
-      {/* Value */}
-      <p className="text-3xl font-mono font-bold text-text-primary tracking-tight mb-1">{value}</p>
+      {/* Value — count-up if numeric, static otherwise */}
+      <p className="text-3xl font-mono font-bold text-text-primary tracking-tight mb-1">
+        {isNumeric
+          ? <CountUpValue raw={stripped} fmt={fmt} />
+          : value
+        }
+      </p>
 
       {/* Label */}
       <p className="text-[11px] font-bold text-text-secondary uppercase tracking-widest">{label}</p>
-
-      {/* Optional trend badge */}
-      {trend != null && (
-        <div className="mt-3">
-          <span
-            className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded"
-            style={{
-              color: trend >= 0 ? '#10B981' : '#F43F5E',
-              backgroundColor: trend >= 0 ? 'rgba(16,185,129,0.10)' : 'rgba(244,63,94,0.10)'
-            }}
-          >
-            {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% vs last week
-          </span>
-        </div>
-      )}
     </div>
   );
 }
