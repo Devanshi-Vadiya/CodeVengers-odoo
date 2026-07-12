@@ -22,7 +22,7 @@ export default function Sidebar() {
       
       {/* Brand Header */}
       <div className="h-20 px-8 flex items-center gap-3 border-b border-surface-raised">
-        <div className="w-8 h-8 rounded bg-accent-signal flex items-center justify-center shadow-[0_0_15px_rgba(255,159,28,0.3)]">
+        <div className="w-8 h-8 rounded bg-accent-signal flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.3)]">
           <Car className="w-5 h-5 text-white" />
         </div>
         <div>

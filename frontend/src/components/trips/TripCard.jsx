@@ -25,16 +25,16 @@ export default function TripCard({
       {/* Route (Vertical Stack) */}
       <div className="flex flex-col gap-0.5">
         <div className="flex items-start gap-2.5">
-          <div className="w-2 h-2 rounded-full bg-accent-signal mt-1.5 shrink-0 relative z-10 shadow-[0_0_8px_rgba(255,159,28,0.5)]" />
+          <div className="w-2 h-2 rounded-full bg-accent-signal mt-1.5 shrink-0 relative z-10 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
           <span className="text-sm font-bold text-text-primary leading-snug break-words flex-1">
             {trip.source}
           </span>
         </div>
-        <div className="flex items-start gap-2.5 -my-1">
+        <div className="flex items-start gap-2.5">
           <div className="w-px h-4 bg-surface-raised ml-[3px] shrink-0" />
         </div>
         <div className="flex items-start gap-2.5">
-          <div className="w-2 h-2 rounded-full border-2 border-status-available bg-base mt-1.5 shrink-0 relative z-10" />
+          <div className="w-2 h-2 rounded-full border-2 border-accent-signal bg-base mt-1.5 shrink-0 relative z-10" />
           <span className="text-sm font-bold text-text-primary leading-snug break-words flex-1">
             {trip.destination}
           </span>
@@ -88,7 +88,7 @@ export default function TripCard({
               <button onClick={() => onCancel(trip)} className="px-3 py-1.5 text-xs font-semibold text-text-secondary bg-surface border border-surface-raised hover:bg-surface-raised hover:text-text-primary rounded-lg transition-colors flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
-              <button onClick={() => onDispatch(trip)} className="px-3 py-1.5 text-xs font-bold text-base bg-accent-signal hover:bg-orange-500 rounded-lg shadow-sm transition-all flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
+              <button onClick={() => onDispatch(trip)} className="px-3 py-1.5 text-xs font-bold text-white bg-accent-signal hover:bg-blue-400 rounded-lg shadow-sm transition-all flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
                 <Navigation className="w-3.5 h-3.5" /> Dispatch
               </button>
             </>
@@ -98,7 +98,7 @@ export default function TripCard({
               <button onClick={() => onCancel(trip)} className="px-3 py-1.5 text-xs font-semibold text-text-secondary bg-surface border border-surface-raised hover:bg-surface-raised hover:text-text-primary rounded-lg transition-colors flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
-              <button onClick={() => onComplete(trip)} className="px-3 py-1.5 text-xs font-bold text-base bg-status-available hover:bg-emerald-400 rounded-lg shadow-sm transition-all flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
+              <button onClick={() => onComplete(trip)} className="px-3 py-1.5 text-xs font-bold text-white bg-status-available hover:bg-emerald-400 rounded-lg shadow-sm transition-all flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50">
                 <Check className="w-3.5 h-3.5" /> Complete
               </button>
             </>
