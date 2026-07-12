@@ -20,11 +20,12 @@ export const SIDEBAR_ITEMS = {
     { name: 'Profile', href: '/profile', icon: User },
   ],
   [ROLES.SAFETY]: [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Vehicle Inspection', href: '/inspections', icon: CheckSquare },
-    { name: 'Maintenance', href: '/maintenance', icon: Wrench },
-    { name: 'Safety Reports', href: '/safety-reports', icon: AlertTriangle },
-    { name: 'Inspection History', href: '/inspection-history', icon: History },
+    { name: 'Dashboard',          href: '/dashboard',          icon: LayoutDashboard },
+    { name: 'Drivers',            href: '/drivers',            icon: Users           },
+    { name: 'Vehicle Inspection', href: '/inspections',        icon: CheckSquare     },
+    { name: 'Maintenance',        href: '/maintenance',        icon: Wrench          },
+    { name: 'Safety Reports',     href: '/safety-reports',     icon: AlertTriangle   },
+    { name: 'Inspection History', href: '/inspection-history', icon: History         },
   ],
   [ROLES.ANALYST]: [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
