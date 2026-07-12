@@ -26,8 +26,8 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
 
   return (
     <div
-      style={{ borderColor: `rgba(${rr},${gg},${bb},0.15)` }}
-      className="bg-surface p-4 rounded-xl border flex flex-col gap-4 animate-in fade-in duration-300 w-full overflow-hidden transition-all hover:border-opacity-40"
+      style={{ borderColor: `rgba(${rr},${gg},${bb},0.2)` }}
+      className="panel p-4 flex flex-col gap-4 animate-in fade-in duration-300 w-full overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-card-hover"
     >
       {/* Top Row: Status Badge + Trip ID */}
       <div className="flex items-center justify-between gap-2">
@@ -63,7 +63,7 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
                 width: 8, height: 8,
                 borderRadius: '50%',
                 border: `2px solid ${statusHex}`,
-                backgroundColor: '#161A23',
+                backgroundColor: '#121F38',
               }}
             />
           </div>
@@ -75,8 +75,7 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
 
       {/* Details grid */}
       <div
-        style={{ backgroundColor: '#0D0F14', borderColor: '#1E2330' }}
-        className="grid grid-cols-2 gap-y-3 gap-x-4 rounded-lg p-3 border"
+        className="grid grid-cols-2 gap-y-3 gap-x-4 rounded-lg p-3 border border-app-border bg-base-mid"
       >
         {/* Vehicle */}
         <div className="flex flex-col gap-1 min-w-0">

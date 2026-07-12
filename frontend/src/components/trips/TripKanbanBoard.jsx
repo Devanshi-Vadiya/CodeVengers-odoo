@@ -63,11 +63,11 @@ export default function TripKanbanBoard({ trips, canAction, onDispatch, onComple
         return (
           <div
             key={col.id}
-            style={{ borderColor: '#262B38', minWidth: 300 }}
-            className="flex-shrink-0 w-72 lg:flex-1 flex flex-col rounded-2xl border bg-surface"
+            style={{ minWidth: 300 }}
+            className="flex-shrink-0 w-72 lg:flex-1 flex flex-col panel overflow-hidden"
           >
             {/* Column header */}
-            <div style={{ borderColor: '#262B38' }} className="px-4 py-3.5 border-b flex items-center justify-between shrink-0">
+            <div className="px-4 py-3.5 border-b border-app-border bg-base-mid/50 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 {/* Colored dot matching the status */}
                 <span
@@ -80,8 +80,8 @@ export default function TripKanbanBoard({ trips, canAction, onDispatch, onComple
                 <h3 className="font-display font-bold text-text-primary text-sm tracking-tight">{col.title}</h3>
               </div>
               <span
-                style={{ backgroundColor: '#1E2330', color: '#8B93A7' }}
-                className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md"
+                style={{ backgroundColor: '#13213D', color: '#8B9BB8' }}
+                className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border border-app-border"
               >
                 {columnTrips.length}
               </span>
@@ -91,8 +91,7 @@ export default function TripKanbanBoard({ trips, canAction, onDispatch, onComple
             <div className="flex-1 p-3 overflow-y-auto space-y-3 min-h-[400px]">
               {columnTrips.length === 0 ? (
                 <div
-                  style={{ borderColor: '#262B38', color: '#8B93A7' }}
-                  className="h-20 flex items-center justify-center text-sm font-medium border border-dashed rounded-xl"
+                  className="h-20 flex items-center justify-center text-sm font-medium border border-dashed border-app-border rounded-xl text-text-secondary"
                 >
                   No trips
                 </div>
