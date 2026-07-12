@@ -7,15 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        base: 'var(--bg-base)',
-        surface: 'var(--surface)',
-        'surface-raised': 'var(--surface-raised)',
-        'accent-signal': 'var(--accent-signal)',
-        'status-available': 'var(--status-available)',
-        'status-shop': 'var(--status-shop)',
-        'status-retired': 'var(--status-retired)',
-        'text-primary': 'var(--text-primary)',
-        'text-secondary': 'var(--text-secondary)',
+        base: 'rgb(var(--bg-base) / <alpha-value>)',
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'surface-raised': 'rgb(var(--surface-raised) / <alpha-value>)',
+        'accent-signal': 'rgb(var(--accent-signal) / <alpha-value>)',
+        'status-available': 'rgb(var(--status-available) / <alpha-value>)',
+        'status-shop': 'rgb(var(--status-shop) / <alpha-value>)',
+        'status-retired': 'rgb(var(--status-retired) / <alpha-value>)',
+        'text-primary': 'rgb(var(--text-primary) / <alpha-value>)',
+        'text-secondary': 'rgb(var(--text-secondary) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],
