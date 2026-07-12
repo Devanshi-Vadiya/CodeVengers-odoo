@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { PERMISSIONS } from '../constants/permissions';
@@ -34,6 +34,7 @@ export default function AppRoutes() {
       {/* Public */}
       <Route path="/" element={<RoleSelection />} />
       <Route path="/login/:roleId" element={<Login />} />
+      <Route path="/login" element={<Navigate to="/" replace />} />
 
       {/* All protected routes share the Layout (Sidebar + Header) */}
       <Route element={
@@ -70,6 +71,7 @@ export default function AppRoutes() {
         <Route path="/expenses" element={<ProtectedRoute allowedRoles={[ROLES.ANALYST, ROLES.MANAGER]}><Expenses /></ProtectedRoute>} />
         <Route path="/analytics" element={<ProtectedRoute allowedRoles={[ROLES.ANALYST]}><Analytics /></ProtectedRoute>} />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

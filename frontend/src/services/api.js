@@ -23,10 +23,11 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // If we are not already on the login page, redirect
-      if (window.location.pathname !== '/login') {
+      localStorage.removeItem('role');
+      // Redirect to role selection home if session is unauthorized
+      if (window.location.pathname !== '/') {
         toast.error('Session expired. Please log in again.');
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     }
     return Promise.reject(error);
