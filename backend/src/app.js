@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const authRoutes = require('./routes/auth.routes');
 const vehicleRoutes = require('./routes/vehicle.routes');
+const driverRoutes = require('./routes/driver.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/drivers', driverRoutes);
 
 // Test route
 app.get('/api/health', (req, res) => {
