@@ -86,17 +86,19 @@ Access is enforced with real **Role-Based Access Control** — server-side, on e
 
 <div align="center">
 
-| Dashboard | Trip Dispatch Board |
-|---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Trips](docs/screenshots/trips.png) |
+**Dashboard**
+![Dashboard](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853941/Screenshot_2026-07-12_161851_cc6xpv.png)
 
-| Vehicle Registry | Driver Management |
-|---|---|
-| ![Vehicles](docs/screenshots/vehicles.png) | ![Drivers](docs/screenshots/drivers.png) |
+**Trip Dispatch Board**
+![Trips](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853934/Screenshot_2026-07-12_162031_kpqbhi.png)
+
+**Vehicle Registry**
+![Vehicles](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853926/Screenshot_2026-07-12_162103_ukv50v.png)
+
+**Driver Management**
+![Drivers](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853838/Screenshot_2026-07-12_162138_fvfg6l.png)
 
 </div>
-
-> Replace the images above by adding your own screenshots to `docs/screenshots/` before final submission.
 
 ---
 
@@ -447,8 +449,8 @@ TransitOps' data model mirrors **Odoo Fleet** and **Odoo Maintenance**: vehicle 
 
 | Role | Member |
 |---|---|
-| 🔧 Backend & Business Logic | *Your teammate's name* |
-| 🎨 Frontend & UX | *Your name* |
+| 🔧 Backend & Business Logic | **Parth Karetiya** |
+| 🎨 Frontend & UX | **Devanshi Vadiya** |
 
 Built in a single hackathon sprint — [see the full execution playbook](./docs/) for how we split the work.
 
