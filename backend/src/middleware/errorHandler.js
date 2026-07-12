@@ -1,13 +1,19 @@
-// Centralized error handler middleware
+const AppError = require('../utils/AppError');
+
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
 
-  let statusCode = err.statusCode || 500;
-  let message = err.message || 'Internal Server Error';
-  let code = err.code || 'INTERNAL_ERROR';
+  let statusCode = 500;
+  let message = 'Internal Server Error';
+  let code = 'INTERNAL_ERROR';
 
+  if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message;
+    code = err.code;
+  }
   // Handle Prisma-specific errors
-  if (err.code === 'P2002') {
+  else if (err.code === 'P2002') {
     statusCode = 409;
     const field = err.meta?.target?.[0] || 'field';
     message = `The ${field} is already taken.`;
@@ -26,3 +32,4 @@ const errorHandler = (err, req, res, next) => {
 };
 
 module.exports = errorHandler;
+
