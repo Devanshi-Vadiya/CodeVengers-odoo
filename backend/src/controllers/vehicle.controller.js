@@ -1,5 +1,5 @@
 const { prisma } = require('../config/db');
-const { checkRegNumberUniqueness, validateStatusUpdate, getVehicleCosts } = require('../services/vehicle.service');
+const { checkRegNumberUniqueness, validateStatusUpdate, getVehicleCosts: calculateVehicleCosts } = require('../services/vehicle.service');
 const AppError = require('../utils/AppError');
 
 const getAllVehicles = async (req, res, next) => {
@@ -144,7 +144,7 @@ const getVehicleCosts = async (req, res, next) => {
 
     await prisma.vehicle.findUniqueOrThrow({ where: { id: parseInt(id) } });
 
-    const costs = await getVehicleCosts(parseInt(id));
+    const costs = await calculateVehicleCosts(parseInt(id));
 
     res.status(200).json({
       success: true,
