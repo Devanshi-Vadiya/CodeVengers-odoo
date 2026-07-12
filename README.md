@@ -452,7 +452,7 @@ TransitOps' data model mirrors **Odoo Fleet** and **Odoo Maintenance**: vehicle 
 | 🔧 Backend & Business Logic | **Parth Karetiya** |
 | 🎨 Frontend & UX | **Devanshi Vadiya** |
 
-Built in a single hackathon sprint — [see the full execution playbook](./docs/) for how we split the work.
+Built in a single hackathon sprint.
 
 </div>
 
