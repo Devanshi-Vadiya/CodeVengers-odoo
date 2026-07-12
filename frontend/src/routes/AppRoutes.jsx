@@ -5,6 +5,7 @@ import { PERMISSIONS } from '../constants/permissions';
 import { ROLES } from '../constants/roles';
 
 // Public pages
+import LandingPage from '../pages/LandingPage';
 import RoleSelection from '../pages/RoleSelection';
 import Login from '../pages/Login';
 
@@ -32,7 +33,8 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Public */}
-      <Route path="/" element={<RoleSelection />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/select-role" element={<RoleSelection />} />
       <Route path="/login/:roleId" element={<Login />} />
 
       {/* All protected routes share the Layout (Sidebar + Header) */}
