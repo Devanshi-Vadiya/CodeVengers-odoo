@@ -1,7 +1,21 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import toast from 'react-hot-toast';
+import authService from '../services/authService';
 
 const AuthContext = createContext(null);
+
+// Map frontend roleId (URL param) → backend DB role
+const ROLE_MAP = {
+  manager: 'fleet_manager',
+  driver: 'driver',
+  safety: 'safety_officer',
+  analyst: 'financial_analyst',
+};
+
+// Reverse map: DB role → frontend roleId
+const REVERSE_ROLE_MAP = Object.fromEntries(
+  Object.entries(ROLE_MAP).map(([k, v]) => [v, k])
+);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -10,24 +24,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // MOCK RESTORE
-    if (token && role) {
-      // Fake delay
-      setTimeout(() => {
-        setUser({ id: 1, name: 'Demo User', role: role });
-        setLoading(false);
-      }, 500);
-    } else {
+    const restoreSession = async () => {
+      if (token) {
+        try {
+          const res = await authService.getMe();
+          const userData = res.data.user;
+          // Map DB role to frontend role for sidebar/permissions
+          const frontendRole = REVERSE_ROLE_MAP[userData.role] || userData.role;
+          setUser({ ...userData, role: frontendRole });
+          setRole(frontendRole);
+          localStorage.setItem('role', frontendRole);
+        } catch {
+          // Token expired or invalid — clear everything
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');
+          setToken(null);
+          setRole(null);
+          setUser(null);
+        }
+      }
       setLoading(false);
-    }
-  }, [token, role]);
+    };
+    restoreSession();
+  }, [token]);
 
   const login = (newToken, userData) => {
+    const frontendRole = REVERSE_ROLE_MAP[userData.role] || userData.role;
     localStorage.setItem('token', newToken);
-    localStorage.setItem('role', userData.role);
+    localStorage.setItem('role', frontendRole);
     setToken(newToken);
-    setRole(userData.role);
-    setUser(userData);
+    setRole(frontendRole);
+    setUser({ ...userData, role: frontendRole });
   };
 
   const logout = () => {
@@ -40,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, role, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, role, token, login, logout, loading, ROLE_MAP }}>
       {children}
     </AuthContext.Provider>
   );

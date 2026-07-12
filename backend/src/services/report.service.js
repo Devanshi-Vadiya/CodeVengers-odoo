@@ -214,7 +214,7 @@ const getROI = async () => {
       const maintenanceCost = maintenanceLogs.reduce((sum, log) => sum + parseFloat(log.cost), 0);
 
       const cost = fuelCost + maintenanceCost;
-      const acquisitionCost = parseFloat(vehicle.acquisitionCost);
+      const acquisitionCost = parseFloat(vehicle.acquisition_cost);
 
       let roiValue = null;
       if (acquisitionCost > 0) {

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ROLE_DETAILS } from '../constants/roles';
+import authService from '../services/authService';
+import toast from 'react-hot-toast';
 import { Loader2, Mail, Lock, ArrowLeft, Car, Users, ShieldCheck, TrendingUp } from 'lucide-react';
 
 const iconMap = {
@@ -35,17 +37,23 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { login } = useAuth();
+  const { login, ROLE_MAP } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // MOCK LOGIN AS REQUESTED
-    setTimeout(() => {
-      login('demo-token', { name: 'Demo User', email, role: roleId });
+    try {
+      const res = await authService.login(email, password);
+      login(res.data.token, res.data.user);
+      toast.success('Logged in successfully!');
       navigate('/dashboard');
-    }, 800);
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Login failed. Check your credentials.';
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!roleInfo) return null;
@@ -69,6 +77,11 @@ export default function Login() {
             <p className="text-sm text-slate-500 mt-1 text-center px-4">
               Access your secure workspace for {roleInfo.title.toLowerCase()} operations.
             </p>
+          </div>
+
+          {/* Demo credentials hint */}
+          <div className="mb-5 p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-700">
+            <strong>Demo:</strong> Use <code className="bg-blue-100 px-1 rounded">fleet@demo.com</code> / <code className="bg-blue-100 px-1 rounded">password123</code>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
