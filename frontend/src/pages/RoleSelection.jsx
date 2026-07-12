@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ROLE_DETAILS } from '../constants/roles';
-import { Car, Users, ShieldCheck, TrendingUp, ChevronRight } from 'lucide-react';
+import { Car, Users, ShieldCheck, TrendingUp, ChevronRight, ArrowRight } from 'lucide-react';
 
 const iconMap = {
   manager: Car,
@@ -9,74 +9,97 @@ const iconMap = {
   analyst: TrendingUp
 };
 
-const bgColors = {
-  manager: 'bg-blue-500',
-  driver: 'bg-emerald-500',
-  safety: 'bg-orange-500',
-  analyst: 'bg-purple-500'
-};
-
-const hoverBorders = {
-  manager: 'hover:border-blue-400 hover:shadow-blue-500/20',
-  driver: 'hover:border-emerald-400 hover:shadow-emerald-500/20',
-  safety: 'hover:border-orange-400 hover:shadow-orange-500/20',
-  analyst: 'hover:border-purple-400 hover:shadow-purple-500/20'
-};
-
 export default function RoleSelection() {
   const navigate = useNavigate();
+  const ACCENT = '#F5A623';
+  const NAVY = '#1C2333';
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#F9FAFB] text-[#1C2333] flex flex-col font-sans selection:bg-[#F5A623] selection:text-[#1C2333]">
       
-      {/* Background gradients */}
-      <div className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <div className="relative z-10 w-full max-w-5xl animate-in fade-in zoom-in-95 duration-700">
-        <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl shadow-blue-500/30 mb-6">
-            <Car className="w-8 h-8 text-white" />
+      {/* ── HEADER ── */}
+      <header className="h-20 px-8 flex items-center justify-between bg-white border-b border-[#E8E2D8]">
+        <div className="flex items-center gap-3">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm"
+            style={{ backgroundColor: ACCENT }}
+          >
+            <Car className="w-5 h-5 text-[#1C2333]" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+          <span className="font-bold text-xl tracking-tight" style={{ color: NAVY }}>
             TransitOps
-          </h1>
-          <p className="text-lg text-slate-400 max-w-xl mx-auto font-medium">
-            Choose your workspace to continue. Your dashboard will be tailored to your responsibilities.
-          </p>
+          </span>
         </div>
+        <div className="text-sm font-medium text-slate-500">
+          Enterprise Fleet Management
+        </div>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Object.values(ROLE_DETAILS).map((role) => {
-            const Icon = iconMap[role.id];
-            
-            return (
-              <button
-                key={role.id}
-                onClick={() => navigate(`/login/${role.id}`)}
-                className={`group relative text-left bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${hoverBorders[role.id]} overflow-hidden`}
-              >
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <div className={`w-14 h-14 rounded-2xl ${bgColors[role.id]} flex items-center justify-center shadow-lg mb-6 transition-transform group-hover:scale-110 group-active:scale-95`}>
-                  <Icon className="w-7 h-7 text-white" />
-                </div>
-                
-                <h3 className="text-xl font-bold text-white mb-2">{role.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed mb-8 h-10">
-                  {role.description}
-                </p>
-                
-                <div className="flex items-center text-sm font-semibold text-slate-300 group-hover:text-white transition-colors">
-                  Continue securely
-                  <ChevronRight className="w-4 h-4 ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </div>
-              </button>
-            );
-          })}
+      {/* ── MAIN CONTENT ── */}
+      <main className="flex-1 flex flex-col items-center justify-center p-6 relative">
+        
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#F5A623]/5 to-transparent pointer-events-none" />
+
+        <div className="w-full max-w-5xl relative z-10">
+          
+          {/* Hero Section */}
+          <div className="text-center mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: NAVY }}>
+              Welcome to TransitOps
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+              Select your designated workspace to access your tailored dashboard, tools, and real-time fleet insights.
+            </p>
+          </div>
+
+          {/* Role Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.values(ROLE_DETAILS).map((role, index) => {
+              const Icon = iconMap[role.id];
+              
+              return (
+                <button
+                  key={role.id}
+                  onClick={() => navigate(`/login/${role.id}`)}
+                  className="group text-left bg-white border border-[#E8E2D8] rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#1C2333]/5 relative overflow-hidden flex flex-col h-full animate-in fade-in zoom-in-95 duration-500"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Top Accent Bar on Hover */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#F5A623] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100" />
+                  
+                  {/* Icon Container */}
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 transition-colors group-hover:bg-[#F5A623]/10 group-hover:border-[#F5A623]/20">
+                    <Icon className="w-6 h-6 text-slate-600 group-hover:text-[#F5A623] transition-colors" />
+                  </div>
+                  
+                  {/* Text Content */}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>{role.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                      {role.description}
+                    </p>
+                  </div>
+                  
+                  {/* Action Link */}
+                  <div className="flex items-center text-sm font-bold text-slate-400 group-hover:text-[#1C2333] transition-colors mt-auto">
+                    Access Portal
+                    <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
         </div>
-      </div>
+      </main>
+
+      {/* ── FOOTER ── */}
+      <footer className="py-8 text-center text-sm text-slate-500">
+        <p>&copy; {new Date().getFullYear()} TransitOps Inc. All rights reserved.</p>
+        <p className="mt-1 text-xs text-slate-400">Secure Enterprise Portal</p>
+      </footer>
+
     </div>
   );
 }
