@@ -1,13 +1,8 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, LayoutDashboard, Car, Users, ClipboardCheck, FileText, Wrench, Wallet, BarChart3, Settings, ShieldAlert, FileSearch } from 'lucide-react';
+import { LogOut, Car } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { SIDEBAR_ITEMS } from '../constants/sidebarItems';
 import { ROLES } from '../constants/roles';
-
-// Icon mapper
-const iconMap = {
-  LayoutDashboard, Car, Users, ClipboardCheck, FileText, Wrench, Wallet, BarChart3, Settings, ShieldAlert, FileSearch
-};
 
 export default function Sidebar() {
   const { pathname } = useLocation();
@@ -39,13 +34,13 @@ export default function Sidebar() {
       {/* Nav Links */}
       <nav className="flex-1 px-4 py-6 overflow-y-auto space-y-1.5">
         {navItems.map((item) => {
-          const Icon = iconMap[item.icon];
-          const isActive = pathname === item.path || (pathname === '/' && item.path === '/dashboard');
+          const Icon = item.icon;
+          const isActive = pathname === item.href || (pathname === '/' && item.href === '/dashboard');
           
           return (
             <Link 
-              key={item.path} 
-              to={item.path}
+              key={item.href} 
+              to={item.href}
               className={`flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50 ${
                 isActive 
                   ? 'bg-surface-raised text-text-primary' 
@@ -53,7 +48,7 @@ export default function Sidebar() {
               }`}
             >
               {Icon && <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-accent-signal' : 'text-text-secondary'}`} />}
-              {item.label}
+              {item.name}
             </Link>
           );
         })}
@@ -65,7 +60,8 @@ export default function Sidebar() {
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-text-secondary hover:bg-surface-raised hover:text-red-400 transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50"
         >
-          <span className="text-sm tracking-wide">Logout</span>
+          <LogOut className="w-5 h-5" />
+          Sign Out
         </button>
       </div>
     </aside>

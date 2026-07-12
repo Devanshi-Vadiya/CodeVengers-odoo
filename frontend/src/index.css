@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    /* Base colors */
-    --bg-base: #12151C;
-    --surface: #1B1F29;
-    --surface-raised: #232838;
+    /* Base colors (RGB format for Tailwind opacity support) */
+    --bg-base: 18 21 28; /* #12151C */
+    --surface: 27 31 41; /* #1B1F29 */
+    --surface-raised: 35 40 56; /* #232838 */
     
-    /* Semantic Status colors */
-    --accent-signal: #FF9F1C;
-    --status-available: #2DD4A7;
-    --status-shop: #F97066;
-    --status-retired: #5B6472;
+    /* Semantic Status colors (RGB) */
+    --accent-signal: 255 159 28; /* #FF9F1C */
+    --status-available: 45 212 167; /* #2DD4A7 */
+    --status-shop: 249 112 102; /* #F97066 */
+    --status-retired: 91 100 114; /* #5B6472 */
     
-    /* Typography colors */
-    --text-primary: #F4F5F7;
-    --text-secondary: #9AA3B2;
+    /* Typography colors (RGB) */
+    --text-primary: 244 245 247; /* #F4F5F7 */
+    --text-secondary: 154 163 178; /* #9AA3B2 */
   }
 
   body {
-    background-color: var(--bg-base);
-    color: var(--text-primary);
+    background-color: rgb(var(--bg-base));
+    color: rgb(var(--text-primary));
   }
 }
