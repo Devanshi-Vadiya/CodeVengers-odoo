@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base colors */
+    --bg-base: #12151C;
+    --surface: #1B1F29;
+    --surface-raised: #232838;
+    
+    /* Semantic Status colors */
+    --accent-signal: #FF9F1C;
+    --status-available: #2DD4A7;
+    --status-shop: #F97066;
+    --status-retired: #5B6472;
+    
+    /* Typography colors */
+    --text-primary: #F4F5F7;
+    --text-secondary: #9AA3B2;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+  }
+}

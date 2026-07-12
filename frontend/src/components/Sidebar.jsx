@@ -1,57 +1,70 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, LayoutDashboard, Car, Users, ClipboardCheck, FileText, Wrench, Wallet, BarChart3, Settings, ShieldAlert, FileSearch } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { SIDEBAR_ITEMS } from '../constants/sidebarItems';
-import { Car, LogOut } from 'lucide-react';
+import { ROLES } from '../constants/roles';
+
+// Icon mapper
+const iconMap = {
+  LayoutDashboard, Car, Users, ClipboardCheck, FileText, Wrench, Wallet, BarChart3, Settings, ShieldAlert, FileSearch
+};
 
 export default function Sidebar() {
-  const { role, logout } = useAuth();
-  const location = useLocation();
+  const { pathname } = useLocation();
+  const { logout, role } = useAuth();
+  const navigate = useNavigate();
 
-  const navigation = SIDEBAR_ITEMS[role] || [];
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const navItems = SIDEBAR_ITEMS[role] || [];
+  const roleName = Object.keys(ROLES).find(key => ROLES[key] === role) || 'User';
 
   return (
-    <aside className="w-72 flex-shrink-0 bg-slate-900 text-white flex flex-col shadow-2xl relative z-20">
-      <div className="h-20 flex items-center px-8 border-b border-white/10 bg-gradient-to-r from-blue-600 to-indigo-600 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/30">
-            <Car className="w-6 h-6 text-white" />
-          </div>
-          <span className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
-            TransitOps
-          </span>
+    <aside className="w-72 bg-surface border-r border-surface-raised flex flex-col shrink-0 font-sans">
+      
+      {/* Brand Header */}
+      <div className="h-20 px-8 flex items-center gap-3 border-b border-surface-raised">
+        <div className="w-8 h-8 rounded bg-accent-signal flex items-center justify-center shadow-[0_0_15px_rgba(255,159,28,0.3)]">
+          <Car className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h1 className="font-display font-bold text-lg text-text-primary tracking-tight">TransitOps</h1>
+          <p className="text-[10px] uppercase font-bold tracking-widest text-text-secondary">{roleName}</p>
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-        {navigation.map((item) => {
-          const isActive = location.pathname.startsWith(item.href);
+      {/* Nav Links */}
+      <nav className="flex-1 px-4 py-6 overflow-y-auto space-y-1.5">
+        {navItems.map((item) => {
+          const Icon = iconMap[item.icon];
+          const isActive = pathname === item.path || (pathname === '/' && item.path === '/dashboard');
+          
           return (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${
-                isActive
-                  ? 'bg-blue-600/10 text-blue-400 font-medium'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+            <Link 
+              key={item.path} 
+              to={item.path}
+              className={`flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50 ${
+                isActive 
+                  ? 'bg-surface-raised text-text-primary' 
+                  : 'text-text-secondary hover:bg-surface-raised/50 hover:text-text-primary'
               }`}
             >
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-full shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
-              )}
-              <item.icon className={`w-5 h-5 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`} />
-              <span className="text-sm tracking-wide">{item.name}</span>
+              {Icon && <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-accent-signal' : 'text-text-secondary'}`} />}
+              {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-white/10">
-        <button
-          onClick={logout}
-          className="w-full flex items-center gap-4 px-4 py-3.5 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all duration-300 group"
+      {/* Footer / Profile */}
+      <div className="p-4 border-t border-surface-raised">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-text-secondary hover:bg-surface-raised hover:text-red-400 transition-colors font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/50"
         >
-          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm tracking-wide">Logout</span>
         </button>
       </div>
