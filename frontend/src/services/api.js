@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
@@ -13,6 +14,21 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      // If we are not already on the login page, redirect
+      if (window.location.pathname !== '/login') {
+        toast.error('Session expired. Please log in again.');
+        window.location.href = '/login';
+      }
+    }
     return Promise.reject(error);
   }
 );

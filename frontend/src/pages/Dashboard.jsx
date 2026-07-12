@@ -1,126 +1,84 @@
-import { Car, Wrench, Map, Users, TrendingUp, AlertTriangle } from 'lucide-react';
-
-const stats = [
-  { name: 'Active Vehicles', value: '42', icon: Car, color: 'text-blue-600', bg: 'bg-blue-100', border: 'border-blue-200' },
-  { name: 'Available for Dispatch', value: '18', icon: Car, color: 'text-emerald-600', bg: 'bg-emerald-100', border: 'border-emerald-200' },
-  { name: 'In Maintenance', value: '4', icon: Wrench, color: 'text-orange-600', bg: 'bg-orange-100', border: 'border-orange-200' },
-  { name: 'Active Trips', value: '20', icon: Map, color: 'text-indigo-600', bg: 'bg-indigo-100', border: 'border-indigo-200' },
-  { name: 'Pending Trips (Draft)', value: '7', icon: Map, color: 'text-slate-600', bg: 'bg-slate-100', border: 'border-slate-200' },
-  { name: 'Drivers On Duty', value: '20', icon: Users, color: 'text-purple-600', bg: 'bg-purple-100', border: 'border-purple-200' },
-];
+import { useAuth } from '../context/AuthContext';
+import { ROLES } from '../constants/roles';
+import { Car, Wrench, Map, Users, TrendingUp, AlertTriangle, CheckSquare, Battery, PieChart, Activity } from 'lucide-react';
 
 export default function Dashboard() {
+  const { role, user } = useAuth();
+
+  // ---------------- MANAGER DASHBOARD ----------------
+  if (role === ROLES.MANAGER) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Manager Overview</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StatCard title="Active Vehicles" value="42" icon={Car} bg="bg-blue-100" color="text-blue-600" />
+          <StatCard title="Active Trips" value="20" icon={Map} bg="bg-indigo-100" color="text-indigo-600" />
+          <StatCard title="Maintenance Alerts" value="4" icon={Wrench} bg="bg-orange-100" color="text-orange-600" />
+        </div>
+        <div className="bg-white/80 p-6 rounded-2xl border border-slate-200">
+          <h2 className="text-lg font-bold text-slate-800 mb-4">Recent Activity</h2>
+          <p className="text-slate-500 text-sm">Trip TRP-104 dispatched successfully.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------- DRIVER DASHBOARD ----------------
+  if (role === ROLES.DRIVER) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Welcome, {user?.name}</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <StatCard title="Assigned Vehicle" value="V-104" icon={Car} bg="bg-emerald-100" color="text-emerald-600" />
+          <StatCard title="Today's Trip" value="TRP-104" icon={Map} bg="bg-blue-100" color="text-blue-600" />
+          <StatCard title="Fuel Status" value="75%" icon={Battery} bg="bg-indigo-100" color="text-indigo-600" />
+          <StatCard title="Trip History" value="142" icon={Activity} bg="bg-purple-100" color="text-purple-600" />
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------- SAFETY CHECKER DASHBOARD ----------------
+  if (role === ROLES.SAFETY) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Safety Dashboard</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <StatCard title="Pending Inspections" value="8" icon={CheckSquare} bg="bg-orange-100" color="text-orange-600" />
+          <StatCard title="Maintenance Queue" value="12" icon={Wrench} bg="bg-red-100" color="text-red-600" />
+          <StatCard title="Safety Violations" value="0" icon={AlertTriangle} bg="bg-emerald-100" color="text-emerald-600" />
+          <StatCard title="Vehicle Health" value="94%" icon={Activity} bg="bg-blue-100" color="text-blue-600" />
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------- ANALYST DASHBOARD ----------------
+  if (role === ROLES.ANALYST) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Financial Overview</h1>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <StatCard title="Total Revenue" value="$45.2k" icon={TrendingUp} bg="bg-emerald-100" color="text-emerald-600" />
+          <StatCard title="Fleet Cost" value="$12.4k" icon={PieChart} bg="bg-purple-100" color="text-purple-600" />
+          <StatCard title="Fuel Analytics" value="$3.2k" icon={Battery} bg="bg-blue-100" color="text-blue-600" />
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+// Simple reusable widget for Dashboards
+function StatCard({ title, value, icon: Icon, bg, color }) {
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Fleet Overview</h1>
-          <p className="text-slate-500 mt-1">Real-time metrics and operations summary.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-200 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-sm font-medium text-slate-700">Live Sync</span>
-          </div>
-        </div>
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-slate-200">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${bg} ${color}`}>
+        <Icon className="w-5 h-5" />
       </div>
-
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {stats.map((stat, idx) => (
-          <div 
-            key={stat.name} 
-            className="bg-white/80 backdrop-blur-md rounded-2xl p-5 shadow-sm border border-slate-200 hover:shadow-md transition-shadow relative overflow-hidden group"
-          >
-            {/* Background decoration */}
-            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-20 transition-transform group-hover:scale-110 ${stat.bg}`}></div>
-            
-            <div className="flex items-start justify-between relative z-10">
-              <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.border} border`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
-              </div>
-            </div>
-            
-            <div className="mt-4 relative z-10">
-              <h3 className="text-3xl font-bold text-slate-800">{stat.value}</h3>
-              <p className="text-sm font-medium text-slate-500 mt-1">{stat.name}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Main Content Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Fleet Utilization Card (Large) */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-slate-800">Fleet Utilization</h2>
-            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-              <TrendingUp className="w-5 h-5" />
-            </div>
-          </div>
-          <div className="flex-1 flex flex-col items-center justify-center py-8">
-            {/* Placeholder for actual chart */}
-            <div className="relative w-48 h-48 flex items-center justify-center">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="40" stroke="#f1f5f9" strokeWidth="12" fill="none" />
-                <circle 
-                  cx="50" cy="50" r="40" 
-                  stroke="url(#gradient)" 
-                  strokeWidth="12" 
-                  fill="none" 
-                  strokeDasharray="251.2" 
-                  strokeDashoffset="130" 
-                  className="transition-all duration-1000 ease-out" 
-                  strokeLinecap="round" 
-                />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#3b82f6" />
-                    <stop offset="100%" stopColor="#6366f1" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-black text-slate-800 tracking-tighter">48%</span>
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">Utilized</span>
-              </div>
-            </div>
-            <p className="text-slate-500 text-sm mt-6 text-center max-w-sm">
-              Currently using 20 out of 42 active vehicles. You have plenty of capacity for new trips today.
-            </p>
-          </div>
-        </div>
-
-        {/* Action Needed Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-          <div className="flex items-center gap-2 mb-6 text-orange-600">
-            <AlertTriangle className="w-5 h-5" />
-            <h2 className="text-lg font-bold text-slate-800">Action Needed</h2>
-          </div>
-          
-          <div className="space-y-4 flex-1">
-            {/* Mock items */}
-            <div className="p-4 bg-orange-50 border border-orange-100 rounded-xl">
-              <h4 className="text-sm font-semibold text-orange-800">Maintenance Overdue</h4>
-              <p className="text-xs text-orange-600 mt-1">Vehicle V-104 needs an oil change.</p>
-            </div>
-            <div className="p-4 bg-red-50 border border-red-100 rounded-xl">
-              <h4 className="text-sm font-semibold text-red-800">Driver License Expiring</h4>
-              <p className="text-xs text-red-600 mt-1">John Doe's license expires in 3 days.</p>
-            </div>
-            <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl">
-              <h4 className="text-sm font-semibold text-slate-700">Trip Delayed</h4>
-              <p className="text-xs text-slate-500 mt-1">TRP-9021 is running 45m behind schedule.</p>
-            </div>
-          </div>
-          
-          <button className="mt-6 w-full py-2.5 bg-slate-900 text-white rounded-xl font-medium text-sm hover:bg-slate-800 transition-colors shadow-sm">
-            View All Alerts
-          </button>
-        </div>
-      </div>
+      <h3 className="text-2xl font-bold text-slate-800">{value}</h3>
+      <p className="text-sm font-medium text-slate-500 mt-1">{title}</p>
     </div>
   );
 }
