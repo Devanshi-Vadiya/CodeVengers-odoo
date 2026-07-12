@@ -89,8 +89,8 @@ export default function ReportTable({ columns, data, loading }) {
           {sorted.map((row, i) => (
             <tr
               key={i}
-              className="group transition-colors"
-              style={{ borderBottom: '1px solid rgba(232,226,216,0.8)' }}
+              className="group transition-colors animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
+              style={{ borderBottom: '1px solid rgba(232,226,216,0.8)', animationDelay: `${i * 50}ms` }}
               onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FAF7F2'}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
