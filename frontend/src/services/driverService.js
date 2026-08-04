@@ -1,35 +1,53 @@
-import api from './api';
+import { drivers, nextIdFor, delay } from './mockDb';
 
 const driverService = {
   getAll: async (params = {}) => {
-    const response = await api.get('/drivers', { params });
-    return response.data;
+    await delay(300);
+    let result = [...drivers];
+    if (params.status) result = result.filter(d => d.status === params.status);
+    return { data: result.sort((a, b) => b.id - a.id) };
   },
 
   getById: async (id) => {
-    const response = await api.get(`/drivers/${id}`);
-    return response.data;
+    await delay(200);
+    const driver = drivers.find(d => d.id === Number(id));
+    if (!driver) throw new Error('Driver not found');
+    return { data: driver };
   },
 
   create: async (data) => {
-    const response = await api.post('/drivers', data);
-    return response.data;
+    await delay(400);
+    const newDriver = {
+      id: nextIdFor('drivers'),
+      ...data,
+      status: 'available',
+    };
+    drivers.unshift(newDriver);
+    return { data: newDriver };
   },
 
   update: async (id, data) => {
-    const response = await api.put(`/drivers/${id}`, data);
-    return response.data;
+    await delay(400);
+    const driver = drivers.find(d => d.id === Number(id));
+    if (driver) Object.assign(driver, data);
+    return { data: driver };
   },
 
   remove: async (id) => {
-    const response = await api.delete(`/drivers/${id}`);
-    return response.data;
+    await delay(300);
+    const index = drivers.findIndex(d => d.id === Number(id));
+    if (index !== -1) drivers.splice(index, 1);
+    return { success: true };
   },
 
-  // Safety Officer only — PATCH /api/drivers/:id/suspend
   suspend: async (id, reason) => {
-    const response = await api.patch(`/drivers/${id}/suspend`, { reason });
-    return response.data;
+    await delay(400);
+    const driver = drivers.find(d => d.id === Number(id));
+    if (driver) {
+      driver.status = 'suspended';
+      // In a real DB we'd store the reason in a log, just mutate status here
+    }
+    return { data: driver };
   },
 };
 

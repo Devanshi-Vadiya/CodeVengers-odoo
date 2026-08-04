@@ -4,9 +4,9 @@ import { Car, Users, ShieldCheck, TrendingUp, ChevronRight, ArrowRight } from 'l
 
 const iconMap = {
   manager: Car,
-  driver: Users,
-  safety: ShieldCheck,
-  analyst: TrendingUp
+  driver:  Users,
+  safety:  ShieldCheck,
+  analyst: TrendingUp,
 };
 
 export default function RoleSelection() {

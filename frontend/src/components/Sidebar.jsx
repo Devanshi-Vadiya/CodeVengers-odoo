@@ -3,9 +3,9 @@ import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { SIDEBAR_ITEMS } from '../constants/sidebarItems';
 
-// Sidebar stays dark navy — deliberate Notion/Linear contrast pattern
-const SIDEBAR_BG = '#1C2333';
-const ACCENT = '#F5A623';
+const ACCENT = '#22C55E';
+const ACCENT_BG = '#DCFCE7';
+const ACCENT_TEXT = '#16A34A';
 
 export default function Sidebar() {
   const { pathname } = useLocation();
@@ -17,46 +17,96 @@ export default function Sidebar() {
 
   return (
     <aside
-      style={{ backgroundColor: SIDEBAR_BG, borderRight: '1px solid rgba(255,255,255,0.08)' }}
-      className="w-64 flex flex-col shrink-0 font-sans"
+      className="w-16 flex flex-col shrink-0 font-sans z-20 select-none"
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderRight: '1px solid #E2E8F0',
+        boxShadow: '2px 0 8px rgba(15,23,42,0.04)',
+      }}
     >
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-5 overflow-y-auto space-y-0.5">
+      {/* Navigation items */}
+      <nav className="flex-1 px-2 py-4 overflow-y-auto flex flex-col items-center gap-1.5">
         {navItems.map(item => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (pathname === '/' && item.href === '/dashboard');
+          const isActive =
+            pathname === item.href ||
+            (pathname === '/' && item.href === '/dashboard');
 
           return (
-            <Link
-              key={item.href}
-              to={item.href}
-              style={isActive ? {
-                borderLeft: `3px solid ${ACCENT}`,
-                color: ACCENT,
-                backgroundColor: 'rgba(245,166,35,0.12)',
-              } : {
-                borderLeft: '3px solid transparent',
-                color: 'rgba(255,255,255,0.55)',
-              }}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-r-lg text-sm font-medium transition-all focus:outline-none hover:text-white hover:bg-white/10"
-            >
-              {Icon && <Icon className="w-4 h-4 shrink-0" />}
-              {item.name}
-            </Link>
+            <div key={item.href} className="relative group flex items-center justify-center w-full">
+              <Link
+                to={item.href}
+                className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-150 focus:outline-none"
+                style={
+                  isActive
+                    ? {
+                        backgroundColor: ACCENT_BG,
+                        color: ACCENT_TEXT,
+                        boxShadow: '0 2px 6px rgba(34,197,94,0.15)',
+                      }
+                    : {
+                        color: '#94A3B8',
+                      }
+                }
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = '#F8FAFC';
+                    e.currentTarget.style.color = '#0F172A';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#94A3B8';
+                  }
+                }}
+              >
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
+                  style={
+                    isActive
+                      ? { backgroundColor: ACCENT, color: '#FFFFFF' }
+                      : { backgroundColor: 'transparent' }
+                  }
+                >
+                  {Icon && <Icon className="w-4 h-4" />}
+                </div>
+              </Link>
+
+              {/* Tooltip on hover */}
+              <div className="absolute left-14 z-50 hidden group-hover:flex items-center px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-medium whitespace-nowrap shadow-md pointer-events-none animate-in fade-in slide-in-from-left-1 duration-150">
+                {item.name}
+              </div>
+            </div>
           );
         })}
       </nav>
 
-      {/* Logout */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} className="p-3">
-        <button
-          onClick={handleLogout}
-          style={{ color: 'rgba(255,255,255,0.45)' }}
-          className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm font-medium hover:bg-white/10 hover:text-red-400 transition-colors focus:outline-none"
-        >
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </button>
+      {/* Logout button at bottom */}
+      <div style={{ borderTop: '1px solid #E2E8F0' }} className="p-2 pb-3 flex flex-col items-center">
+        <div className="relative group flex items-center justify-center w-full">
+          <button
+            onClick={handleLogout}
+            aria-label="Sign Out"
+            className="w-11 h-11 rounded-xl flex items-center justify-center transition-all focus:outline-none"
+            style={{ color: '#CBD5E1' }}
+            onMouseEnter={e => {
+              e.currentTarget.style.backgroundColor = '#FEF2F2';
+              e.currentTarget.style.color = '#EF4444';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#CBD5E1';
+            }}
+          >
+            <LogOut className="w-4.5 h-4.5" />
+          </button>
+
+          {/* Tooltip */}
+          <div className="absolute left-14 z-50 hidden group-hover:flex items-center px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-medium whitespace-nowrap shadow-md pointer-events-none animate-in fade-in slide-in-from-left-1 duration-150">
+            Sign Out
+          </div>
+        </div>
       </div>
     </aside>
   );

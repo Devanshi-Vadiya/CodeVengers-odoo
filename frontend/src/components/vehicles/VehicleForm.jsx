@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertCircle } from 'lucide-react';
 import vehicleService from '../../services/vehicleService';
 
@@ -91,103 +92,110 @@ export default function VehicleForm({ isOpen, onClose, vehicle, onSuccess }) {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-end">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200"
         onClick={onClose}
       />
 
       {/* Drawer */}
-      <div className="relative h-full w-full max-w-lg bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+      <div className="relative h-full w-full max-w-lg bg-white shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 z-10">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid #E2E8F0' }}>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-lg font-bold" style={{ color: '#0F172A' }}>
               {isEditing ? 'Edit Vehicle' : 'Register New Vehicle'}
             </h2>
-            <p className="text-sm text-slate-500 mt-0.5">
-              {isEditing ? 'Update vehicle details below.' : 'Fill in the details to register a vehicle.'}
+            <p className="text-sm mt-0.5" style={{ color: '#64748B' }}>
+              {isEditing ? 'Update vehicle details.' : 'Add a new vehicle to your operational fleet.'}
             </p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
-            <X className="w-5 h-5 text-slate-500" />
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Body */}
+        {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {errors.form && (
-            <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl text-red-700 text-sm">
-              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              {errors.form}
+            <div className="flex items-start gap-3 p-3.5 bg-red-50 border border-red-200/80 rounded-xl text-red-700 text-xs font-medium">
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              <span>{errors.form}</span>
             </div>
           )}
 
-          <Field label="Registration Number" error={errors.reg_number}>
+          <Field label="Registration Number *" error={errors.reg_number}>
             <input
               name="reg_number"
               value={form.reg_number}
               onChange={handleChange}
+              placeholder="e.g. GJ-01-AA-1001"
               disabled={isEditing}
-              placeholder="e.g. TN-01-AB-1234"
               className={inputCls(errors.reg_number, isEditing)}
             />
           </Field>
 
-          <Field label="Vehicle Name" error={errors.name}>
+          <Field label="Vehicle Name / Code *" error={errors.name}>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="e.g. Van-05"
+              placeholder="e.g. TRK-001"
               className={inputCls(errors.name)}
             />
           </Field>
 
-          <Field label="Type" error={errors.type}>
-            <select name="type" value={form.type} onChange={handleChange} className={inputCls(errors.type)}>
+          <Field label="Vehicle Type *" error={errors.type}>
+            <select
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className={inputCls(errors.type)}
+            >
               <option value="">Select type…</option>
-              {VEHICLE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              {VEHICLE_TYPES.map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
             </select>
           </Field>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label="Max Capacity (kg)" error={errors.max_capacity}>
-              <input
-                name="max_capacity"
-                type="number"
-                min="1"
-                value={form.max_capacity}
-                onChange={handleChange}
-                placeholder="500"
-                className={inputCls(errors.max_capacity)}
-              />
-            </Field>
+          <Field label="Max Cargo Capacity (kg) *" error={errors.max_capacity}>
+            <input
+              name="max_capacity"
+              type="number"
+              min="1"
+              value={form.max_capacity}
+              onChange={handleChange}
+              placeholder="e.g. 5000"
+              className={inputCls(errors.max_capacity)}
+            />
+          </Field>
 
-            <Field label="Odometer (km)" error={errors.odometer}>
-              <input
-                name="odometer"
-                type="number"
-                min="0"
-                value={form.odometer}
-                onChange={handleChange}
-                placeholder="0"
-                className={inputCls(errors.odometer)}
-              />
-            </Field>
-          </div>
+          <Field label="Current Odometer (km) *" error={errors.odometer}>
+            <input
+              name="odometer"
+              type="number"
+              min="0"
+              value={form.odometer}
+              onChange={handleChange}
+              placeholder="e.g. 12000"
+              className={inputCls(errors.odometer)}
+            />
+          </Field>
 
-          <Field label="Acquisition Cost ($)" error={errors.acquisition_cost}>
+          <Field label="Acquisition Cost ($) *" error={errors.acquisition_cost}>
             <input
               name="acquisition_cost"
               type="number"
               min="1"
-              step="0.01"
               value={form.acquisition_cost}
               onChange={handleChange}
-              placeholder="25000"
+              placeholder="e.g. 850000"
               className={inputCls(errors.acquisition_cost)}
             />
           </Field>
@@ -198,14 +206,14 @@ export default function VehicleForm({ isOpen, onClose, vehicle, onSuccess }) {
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+            className="px-4 py-2.5 text-sm font-semibold rounded-xl text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors disabled:opacity-60 flex items-center gap-2"
+            className="btn-primary disabled:opacity-60"
           >
             {submitting ? (
               <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving…</>
@@ -213,17 +221,18 @@ export default function VehicleForm({ isOpen, onClose, vehicle, onSuccess }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 function Field({ label, error, children }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium text-slate-700">{label}</label>
+      <label className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#64748B' }}>{label}</label>
       {children}
       {error && (
-        <p className="flex items-center gap-1.5 text-xs text-red-600">
+        <p className="flex items-center gap-1.5 text-xs" style={{ color: '#EF4444' }}>
           <AlertCircle className="w-3.5 h-3.5" /> {error}
         </p>
       )}
@@ -236,7 +245,7 @@ function inputCls(hasError, disabled) {
     'w-full px-3.5 py-2.5 text-sm rounded-xl border transition-all outline-none',
     hasError
       ? 'border-red-300 bg-red-50 focus:ring-2 focus:ring-red-300'
-      : 'border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-400 focus:border-blue-400',
+      : 'border-slate-200 bg-slate-50 focus:ring-2 focus:ring-green-400 focus:border-green-400',
     disabled ? 'opacity-60 cursor-not-allowed' : '',
   ].join(' ');
 }

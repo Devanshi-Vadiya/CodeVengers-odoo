@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Download, BarChart2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Download, BarChart2, Zap } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
@@ -8,6 +8,7 @@ import { ROLES } from '../constants/roles';
 import { useReports } from '../hooks/useReports';
 import ReportTabs from '../components/reports/ReportTabs';
 import ReportTable from '../components/reports/ReportTable';
+import aiService from '../services/aiService';
 
 // ─── Column Definitions per tab ────────────────────────────────────────────
 const COLUMNS = {
@@ -23,7 +24,7 @@ const COLUMNS = {
       render: (val) => (
         <span
           className="font-mono font-bold"
-          style={{ color: val >= 5 ? '#10B981' : val >= 4 ? '#F5A623' : '#F43F5E' }}
+          style={{ color: val >= 5 ? '#22C55E' : val >= 4 ? '#F59E0B' : '#EF4444' }}
         >
           {val}
         </span>
@@ -41,18 +42,18 @@ const COLUMNS = {
       label: 'Utilization %',
       render: (val) => (
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: '#E8E2D8', minWidth: '80px' }}>
+          <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#E2E8F0', minWidth: '80px' }}>
             <div
               className="h-full rounded-full transition-all"
               style={{
                 width: `${val}%`,
-                backgroundColor: val >= 80 ? '#10B981' : val >= 50 ? '#F5A623' : '#F43F5E'
+                backgroundColor: val >= 80 ? '#22C55E' : val >= 50 ? '#F59E0B' : '#EF4444'
               }}
             />
           </div>
           <span
             className="font-mono font-bold text-sm w-10 text-right"
-            style={{ color: val >= 80 ? '#10B981' : val >= 50 ? '#F5A623' : '#F43F5E' }}
+            style={{ color: val >= 80 ? '#22C55E' : val >= 50 ? '#F59E0B' : '#EF4444' }}
           >
             {val}%
           </span>
@@ -70,7 +71,7 @@ const COLUMNS = {
       key: 'total',
       label: 'Total ($)',
       render: (val) => (
-        <span className="font-mono font-bold text-sm" style={{ color: '#F5A623' }}>
+        <span className="font-mono font-bold text-sm" style={{ color: '#22C55E' }}>
           ${val.toLocaleString()}
         </span>
       )
@@ -86,7 +87,7 @@ const COLUMNS = {
       key: 'roi',
       label: 'ROI %',
       render: (val) => (
-        <span className="font-mono font-bold text-sm" style={{ color: '#10B981' }}>
+        <span className="font-mono font-bold text-sm" style={{ color: '#22C55E' }}>
           {val}%
         </span>
       )
@@ -94,40 +95,42 @@ const COLUMNS = {
   ],
 };
 
-// Bar chart color per utilization level
 function UtilizationBar({ data }) {
   if (!data?.length) return null;
   return (
-    <div className="mb-8">
-      <h3 className="text-sm font-bold text-text-secondary uppercase tracking-wider mb-4">
+    <div className="mb-6">
+      <h3 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#94A3B8' }}>
         Utilization by Vehicle
       </h3>
       <ResponsiveContainer width="100%" height={220}>
-        <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }} barSize={32}>
-          <CartesianGrid vertical={false} stroke="rgba(34,51,90,0.5)" />
+        <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }} barSize={28}>
+          <CartesianGrid vertical={false} stroke="#E2E8F0" strokeDasharray="4 4" />
           <XAxis
             dataKey="vehicle"
-            tick={{ fill: '#8B9BB8', fontSize: 11, fontFamily: 'monospace' }}
-            axisLine={false}
-            tickLine={false}
+            tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'monospace' }}
+            axisLine={false} tickLine={false}
           />
           <YAxis
             domain={[0, 100]}
-            tick={{ fill: '#8B9BB8', fontSize: 11 }}
-            axisLine={false}
-            tickLine={false}
+            tick={{ fill: '#94A3B8', fontSize: 11 }}
+            axisLine={false} tickLine={false}
             tickFormatter={v => `${v}%`}
           />
           <Tooltip
-            contentStyle={{ backgroundColor: '#FFFFFF', border: '1px solid #E8E2D8', borderRadius: '12px', color: '#1C2333', boxShadow: '0 4px 16px rgba(28,35,51,0.12)' }}
+            contentStyle={{
+              backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0',
+              borderRadius: '12px', color: '#0F172A',
+              boxShadow: '0 4px 16px rgba(15,23,42,0.10)',
+              fontSize: '13px',
+            }}
             formatter={(v) => [`${v}%`, 'Utilization']}
-            cursor={{ fill: 'rgba(245,166,35,0.05)' }}
+            cursor={{ fill: 'rgba(34,197,94,0.05)' }}
           />
           <Bar dataKey="utilization" radius={[6, 6, 0, 0]}>
             {data.map((entry, index) => (
               <Cell
                 key={index}
-                fill={entry.utilization >= 80 ? '#10B981' : entry.utilization >= 50 ? '#F5A623' : '#F43F5E'}
+                fill={entry.utilization >= 80 ? '#22C55E' : entry.utilization >= 50 ? '#F59E0B' : '#EF4444'}
               />
             ))}
           </Bar>
@@ -141,26 +144,42 @@ export default function ReportsPage() {
   const { role } = useAuth();
   const defaultTab = role === ROLES.ANALYST ? 'roi' : 'fuel_efficiency';
   const { activeTab, data, loading, switchTab, fetchTab, exportCsv } = useReports(defaultTab);
+  const [anomalies, setAnomalies] = useState([]);
 
-  // Fetch on mount
-  useEffect(() => { fetchTab(defaultTab); }, []);  // eslint-disable-line
+  useEffect(() => { fetchTab(defaultTab); }, []); // eslint-disable-line
+
+  useEffect(() => {
+    async function loadAnomalies() {
+      try {
+        const res = await aiService.getFuelAnomalies();
+        setAnomalies(res.data || []);
+      } catch (err) {
+        // Degrade gracefully
+      }
+    }
+    loadAnomalies();
+  }, []);
 
   const cols = COLUMNS[activeTab] || [];
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight"><em style={{ fontStyle: 'italic', fontWeight: 600 }}>Fleet</em> Reports</h1>
-          <p className="text-text-secondary mt-1">Analyse fleet performance, costs, and ROI.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: '#0F172A' }}>
+            <span style={{ color: '#22C55E' }}>Fleet</span> Reports
+          </h1>
+          <p className="text-sm mt-1" style={{ color: '#64748B' }}>
+            Analyse fleet performance, costs, and ROI.
+          </p>
         </div>
         <button
           id="export-csv-btn"
           onClick={exportCsv}
           disabled={loading || !data.length}
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E8E2D8', color: '#6B7280', boxShadow: '0 1px 3px rgba(28,35,51,0.07)' }}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold hover:text-text-primary hover:border-accent-signal/50 transition-all focus:outline-none disabled:opacity-40 disabled:pointer-events-none"
+          className="btn-ghost disabled:opacity-40 disabled:pointer-events-none"
         >
           <Download className="w-4 h-4" />
           Export CSV
@@ -172,7 +191,32 @@ export default function ReportsPage() {
         <ReportTabs activeTab={activeTab} onSwitch={switchTab} role={role} />
       </div>
 
-      {/* Chart (only on utilization tab) */}
+      {/* Fuel Anomalies Banner */}
+      {activeTab === 'fuel_efficiency' && anomalies.length > 0 && (
+        <div className="p-4 rounded-xl border flex flex-col gap-2 animate-in fade-in" style={{ backgroundColor: '#FEFCE8', borderColor: '#FEF08A' }}>
+          <div className="flex items-center gap-2 font-bold text-sm" style={{ color: '#A16207' }}>
+            <Zap className="w-4 h-4 text-yellow-600" />
+            <span>AI Fuel Anomaly Alert ({anomalies.length} Flagged Trips)</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
+            {anomalies.map((a, i) => (
+              <div key={i} className="p-3 rounded-lg bg-white/80 border border-yellow-200 text-xs flex flex-col justify-between">
+                <div className="font-bold text-slate-800 flex items-center justify-between">
+                  <span>{a.vehicle_name}</span>
+                  <span className={`px-2 py-0.5 rounded font-mono font-bold ${a.deviationPct < 0 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    {a.deviationPct > 0 ? `+${a.deviationPct}%` : `${a.deviationPct}%`}
+                  </span>
+                </div>
+                <div className="text-slate-500 mt-1">
+                  Trip #{a.trip_id} ({a.source} → {a.destination}): <strong className="text-slate-700">{a.tripEfficiency} km/L</strong> vs fleet avg {a.avgEfficiency} km/L
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chart (utilization tab only) */}
       {activeTab === 'utilization' && !loading && data.length > 0 && (
         <div key={`chart-${activeTab}`} className="panel p-6 animate-in fade-in zoom-in-95 duration-500 fill-mode-both" style={{ animationDelay: '200ms' }}>
           <UtilizationBar data={data} />
@@ -187,7 +231,9 @@ export default function ReportsPage() {
             {activeTab.replace(/_/g, ' ')} Report
           </h3>
           {!loading && data.length > 0 && (
-            <span className="ml-auto text-xs text-text-secondary font-mono">{data.length} vehicles</span>
+            <span className="ml-auto text-xs font-mono" style={{ color: '#94A3B8' }}>
+              {data.length} vehicles
+            </span>
           )}
         </div>
         <ReportTable columns={cols} data={data} loading={loading} />

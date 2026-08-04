@@ -11,6 +11,7 @@ const fuelLogRoutes = require('./routes/fuelLog.routes');
 const expenseRoutes = require('./routes/expense.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const reportsRoutes = require('./routes/reports.routes');
+const aiRoutes = require('./routes/ai.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -48,6 +49,7 @@ app.use('/api/fuel-logs', fuelLogRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Test route
 app.get('/api/health', (req, res) => {

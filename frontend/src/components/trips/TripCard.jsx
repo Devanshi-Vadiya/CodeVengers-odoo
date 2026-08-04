@@ -114,7 +114,7 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
               {trip.cargo_weight} / {vehicle?.max_capacity ?? 0} kg
             </span>
           </div>
-          <div style={{ backgroundColor: '#E8E2D8' }} className="h-1.5 w-full rounded-full overflow-hidden">
+          <div style={{ backgroundColor: '#E2E8F0' }} className="h-1.5 w-full rounded-full overflow-hidden">
             <div style={{
               width: `${capacityPct}%`,
               backgroundColor: statusHex,
@@ -132,14 +132,14 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
             <>
               <button
                 onClick={() => onCancel(trip)}
-                style={{ color: '#6B7280', borderColor: '#E8E2D8' }}
+                style={{ color: '#64748B', borderColor: '#E2E8F0' }}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border bg-transparent hover:bg-base-mid focus:outline-none"
               >
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
               <button
                 onClick={() => onDispatch(trip)}
-                style={{ backgroundColor: '#F5A623', color: '#1C2333' }}
+                style={{ backgroundColor: '#22C55E', color: '#FFFFFF' }}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold hover:brightness-110 focus:outline-none"
               >
                 <Navigation className="w-3.5 h-3.5" /> Dispatch
@@ -150,14 +150,14 @@ export default function TripCard({ trip, canAction, onDispatch, onComplete, onCa
             <>
               <button
                 onClick={() => onCancel(trip)}
-                style={{ color: '#6B7280', borderColor: '#E8E2D8' }}
+                style={{ color: '#64748B', borderColor: '#E2E8F0' }}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border bg-transparent hover:bg-base-mid focus:outline-none"
               >
                 <X className="w-3.5 h-3.5" /> Cancel
               </button>
               <button
                 onClick={() => onComplete(trip)}
-                style={{ backgroundColor: '#10B981', color: '#fff' }}
+                style={{ backgroundColor: '#22C55E', color: '#fff' }}
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold hover:brightness-110 focus:outline-none"
               >
                 <Check className="w-3.5 h-3.5" /> Complete

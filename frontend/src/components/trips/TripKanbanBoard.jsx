@@ -2,10 +2,10 @@ import TripCard from './TripCard';
 
 // Column definitions with exact status hex colors
 const COLUMNS = [
-  { id: 'draft',      title: 'Draft',      hex: '#8B93A7' },
+  { id: 'draft',      title: 'Draft',      hex: '#94A3B8' },
   { id: 'dispatched', title: 'Dispatched', hex: '#3B82F6' },
-  { id: 'completed',  title: 'Completed',  hex: '#10B981' },
-  { id: 'cancelled',  title: 'Cancelled',  hex: '#F43F5E' },
+  { id: 'completed',  title: 'Completed',  hex: '#22C55E' },
+  { id: 'cancelled',  title: 'Cancelled',  hex: '#EF4444' },
 ];
 
 export function TripKanbanSkeleton() {
@@ -18,10 +18,10 @@ export function TripKanbanSkeleton() {
         return (
           <div
             key={col.id}
-            style={{ borderColor: '#262B38', minWidth: 300 }}
+            style={{ borderColor: '#E2E8F0', minWidth: 300, backgroundColor: '#FFFFFF' }}
             className="flex-shrink-0 w-72 lg:flex-1 rounded-2xl border bg-surface flex flex-col"
           >
-            <div style={{ borderColor: '#262B38' }} className="px-4 py-3.5 border-b flex items-center justify-between">
+            <div style={{ borderColor: '#E2E8F0' }} className="px-4 py-3.5 border-b flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span
                   style={{ backgroundColor: col.hex, boxShadow: `0 0 6px rgba(${r},${g},${b},0.6)` }}
@@ -80,7 +80,7 @@ export default function TripKanbanBoard({ trips, canAction, onDispatch, onComple
                 <h3 className="font-display font-bold text-text-primary text-sm tracking-tight">{col.title}</h3>
               </div>
               <span
-                style={{ backgroundColor: '#13213D', color: '#8B9BB8' }}
+                style={{ backgroundColor: '#F0F4FA', color: '#64748B' }}
                 className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border border-app-border"
               >
                 {columnTrips.length}
@@ -91,7 +91,8 @@ export default function TripKanbanBoard({ trips, canAction, onDispatch, onComple
             <div className="flex-1 p-3 overflow-y-auto space-y-3 min-h-[400px]">
               {columnTrips.length === 0 ? (
                 <div
-                  className="h-20 flex items-center justify-center text-sm font-medium border border-dashed border-app-border rounded-xl text-text-secondary"
+                  className="h-20 flex items-center justify-center text-sm font-medium border border-dashed rounded-xl"
+                style={{ borderColor: '#E2E8F0', color: '#94A3B8' }}
                 >
                   No trips
                 </div>
