@@ -1,44 +1,21 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, AlertCircle } from 'lucide-react';
+import { useVehicles } from '../../hooks/useVehicles';
 
 const INPUT_CLS = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/15 transition-colors appearance-none disabled:opacity-50";
 
 export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
-  const [vehicles, setVehicles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { vehicles, loading, error: vehiclesError } = useVehicles();
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({ vehicle_id: '', description: '', cost: '', priority: 'Medium' });
 
   useEffect(() => {
     if (isOpen) {
-      fetchVehicles();
       setFormData({ vehicle_id: '', description: '', cost: '', priority: 'Medium' });
       setError(null);
     }
   }, [isOpen]);
-
-  const fetchVehicles = async () => {
-    try {
-      setLoading(true);
-      let data;
-      try {
-        const res = await vehicleService.getAll();
-        data = res.data ?? res;
-      } catch {
-        data = [
-          { id: 101, reg_number: 'TRK-001', name: 'Freightliner Cascadia' },
-          { id: 102, reg_number: 'TRK-002', name: 'Volvo VNL 860' },
-          { id: 103, reg_number: 'TRK-003', name: 'Kenworth T680' }
-        ];
-      }
-      setVehicles(data);
-    } catch (err) {
-      setError('Failed to load vehicles');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,10 +27,9 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
 
   if (!isOpen) return null;
 
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-slate-200 z-10 animate-in zoom-in-95 duration-200 my-auto">
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm animate-in fade-in duration-300">
+      <div className="w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-app-border animate-in fade-in zoom-in-95 duration-300 slide-in-from-bottom-4">
 
         <div className="px-6 py-4 border-b border-app-border flex items-center justify-between shrink-0">
           <h2 className="text-lg font-display font-bold text-text-primary tracking-tight">Log Maintenance</h2>
@@ -73,9 +49,10 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Vehicle</label>
             <select value={formData.vehicle_id} onChange={e => setFormData({ ...formData, vehicle_id: e.target.value })} className={INPUT_CLS} disabled={loading}>
-              <option value="">Select a vehicle</option>
-              {vehicles.map(v => <option key={v.id} value={v.id}>{v.reg_number} - {v.name}</option>)}
+              <option value="">{loading ? 'Loading vehicles...' : 'Select a vehicle'}</option>
+              {vehicles?.map(v => <option key={v.id} value={v.id}>{v.reg_number} - {v.name}</option>)}
             </select>
+            {vehiclesError && <p className="text-xs text-red-500 mt-1">Failed to load vehicles</p>}
           </div>
 
           <div className="space-y-1.5">

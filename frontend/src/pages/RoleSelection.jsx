@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ROLE_DETAILS } from '../constants/roles';
-import { Car, Users, ShieldCheck, TrendingUp, ArrowRight } from 'lucide-react';
+import { Car, Users, ShieldCheck, TrendingUp, ChevronRight, ArrowRight } from 'lucide-react';
 
 const iconMap = {
   manager: Car,
@@ -9,122 +9,97 @@ const iconMap = {
   analyst: TrendingUp,
 };
 
-// Each role gets a green-family accent for consistency with the app theme
-const roleAccents = {
-  manager: { bg: '#DCFCE7', iconBg: '#22C55E', badge: 'Fleet Manager',    border: 'rgba(34,197,94,0.20)' },
-  driver:  { bg: '#DBEAFE', iconBg: '#3B82F6', badge: 'Driver',           border: 'rgba(59,130,246,0.20)' },
-  safety:  { bg: '#FEF3C7', iconBg: '#F59E0B', badge: 'Safety Officer',   border: 'rgba(245,158,11,0.20)' },
-  analyst: { bg: '#EDE9FE', iconBg: '#8B5CF6', badge: 'Analyst',          border: 'rgba(139,92,246,0.20)' },
-};
-
 export default function RoleSelection() {
   const navigate = useNavigate();
+  const ACCENT = '#F5A623';
+  const NAVY = '#1C2333';
 
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans"
-      style={{ backgroundColor: '#F5F7FA' }}
-    >
-      {/* Soft background blobs */}
-      <div
-        className="absolute top-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full blur-[100px] pointer-events-none"
-        style={{ backgroundColor: 'rgba(34,197,94,0.07)' }}
-      />
-      <div
-        className="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none"
-        style={{ backgroundColor: 'rgba(59,130,246,0.06)' }}
-      />
+    <div className="min-h-screen bg-[#F9FAFB] text-[#1C2333] flex flex-col font-sans selection:bg-[#F5A623] selection:text-[#1C2333]">
+      
+      {/* ── HEADER ── */}
+      <header className="h-20 px-8 flex items-center justify-between bg-white border-b border-[#E8E2D8]">
+        <div className="flex items-center gap-3">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm"
+            style={{ backgroundColor: ACCENT }}
+          >
+            <Car className="w-5 h-5 text-[#1C2333]" />
+          </div>
+          <span className="font-bold text-xl tracking-tight" style={{ color: NAVY }}>
+            TransitOps
+          </span>
+        </div>
+        <div className="text-sm font-medium text-slate-500">
+          Enterprise Fleet Management
+        </div>
+      </header>
 
-      <div className="relative z-10 w-full max-w-5xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* ── MAIN CONTENT ── */}
+      <main className="flex-1 flex flex-col items-center justify-center p-6 relative">
+        
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-[#F5A623]/5 to-transparent pointer-events-none" />
 
-        {/* Header */}
-        <div className="text-center mb-14">
-          {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-              style={{
-                backgroundColor: '#22C55E',
-                boxShadow: '0 8px 24px rgba(34,197,94,0.30)',
-              }}
-            >
-              <Car className="w-6 h-6 text-white" />
-            </div>
-            <span
-              className="font-display font-extrabold text-3xl tracking-tight"
-              style={{ color: '#0F172A' }}
-            >
-              TransitOps
-            </span>
+        <div className="w-full max-w-5xl relative z-10">
+          
+          {/* Hero Section */}
+          <div className="text-center mb-16 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: NAVY }}>
+              Welcome to TransitOps
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto font-medium">
+              Select your designated workspace to access your tailored dashboard, tools, and real-time fleet insights.
+            </p>
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight mb-2" style={{ color: '#0F172A' }}>
-            Choose your workspace
-          </h1>
-          <p className="text-base" style={{ color: '#64748B' }}>
-            Your dashboard will be tailored to your role and responsibilities.
-          </p>
-        </div>
-
-        {/* Role cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {Object.values(ROLE_DETAILS).map((role) => {
-            const Icon = iconMap[role.id];
-            const accent = roleAccents[role.id] ?? roleAccents.manager;
-
-            return (
-              <button
-                key={role.id}
-                onClick={() => navigate(`/login/${role.id}`)}
-                className="group text-left rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1.5 focus:outline-none"
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  border: `1px solid ${accent.border}`,
-                  boxShadow: '0 1px 4px rgba(15,23,42,0.06)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(15,23,42,0.10)';
-                  e.currentTarget.style.borderColor = accent.iconBg;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.boxShadow = '0 1px 4px rgba(15,23,42,0.06)';
-                  e.currentTarget.style.borderColor = accent.border;
-                }}
-              >
-                {/* Icon */}
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110"
-                  style={{ backgroundColor: accent.iconBg }}
+          {/* Role Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.values(ROLE_DETAILS).map((role, index) => {
+              const Icon = iconMap[role.id];
+              
+              return (
+                <button
+                  key={role.id}
+                  onClick={() => navigate(`/login/${role.id}`)}
+                  className="group text-left bg-white border border-[#E8E2D8] rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#1C2333]/5 relative overflow-hidden flex flex-col h-full animate-in fade-in zoom-in-95 duration-500"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
+                  {/* Top Accent Bar on Hover */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#F5A623] scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100" />
+                  
+                  {/* Icon Container */}
+                  <div className="w-12 h-12 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center mb-6 transition-colors group-hover:bg-[#F5A623]/10 group-hover:border-[#F5A623]/20">
+                    <Icon className="w-6 h-6 text-slate-600 group-hover:text-[#F5A623] transition-colors" />
+                  </div>
+                  
+                  {/* Text Content */}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold mb-2" style={{ color: NAVY }}>{role.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                      {role.description}
+                    </p>
+                  </div>
+                  
+                  {/* Action Link */}
+                  <div className="flex items-center text-sm font-bold text-slate-400 group-hover:text-[#1C2333] transition-colors mt-auto">
+                    Access Portal
+                    <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
 
-                {/* Title + description */}
-                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0F172A' }}>
-                  {role.title}
-                </h3>
-                <p className="text-sm leading-relaxed mb-6" style={{ color: '#64748B' }}>
-                  {role.description}
-                </p>
-
-                {/* CTA row */}
-                <div
-                  className="flex items-center gap-1.5 text-sm font-semibold transition-all duration-150"
-                  style={{ color: accent.iconBg }}
-                >
-                  Continue
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </div>
-              </button>
-            );
-          })}
         </div>
+      </main>
 
-        {/* Footer note */}
-        <p className="text-center text-xs mt-10" style={{ color: '#94A3B8' }}>
-          All data is encrypted and access is role-restricted. &nbsp;·&nbsp; TransitOps v2.0
-        </p>
-      </div>
+      {/* ── FOOTER ── */}
+      <footer className="py-8 text-center text-sm text-slate-500">
+        <p>&copy; {new Date().getFullYear()} TransitOps Inc. All rights reserved.</p>
+        <p className="mt-1 text-xs text-slate-400">Secure Enterprise Portal</p>
+      </footer>
+
     </div>
   );
 }

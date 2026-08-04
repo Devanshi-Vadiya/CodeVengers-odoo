@@ -187,7 +187,9 @@ export default function ReportsPage() {
       </div>
 
       {/* Tabs */}
-      <ReportTabs activeTab={activeTab} onSwitch={switchTab} role={role} />
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both" style={{ animationDelay: '100ms' }}>
+        <ReportTabs activeTab={activeTab} onSwitch={switchTab} role={role} />
+      </div>
 
       {/* Fuel Anomalies Banner */}
       {activeTab === 'fuel_efficiency' && anomalies.length > 0 && (
@@ -216,21 +218,16 @@ export default function ReportsPage() {
 
       {/* Chart (utilization tab only) */}
       {activeTab === 'utilization' && !loading && data.length > 0 && (
-        <div className="panel p-6">
+        <div key={`chart-${activeTab}`} className="panel p-6 animate-in fade-in zoom-in-95 duration-500 fill-mode-both" style={{ animationDelay: '200ms' }}>
           <UtilizationBar data={data} />
         </div>
       )}
 
       {/* Table */}
-      <div className="panel overflow-hidden">
-        <div
-          className="px-6 py-4 flex items-center gap-2"
-          style={{ borderBottom: '1px solid #E2E8F0' }}
-        >
-          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#DCFCE7' }}>
-            <BarChart2 className="w-3.5 h-3.5" style={{ color: '#22C55E' }} />
-          </div>
-          <h3 className="text-sm font-bold capitalize" style={{ color: '#0F172A' }}>
+      <div key={`table-${activeTab}`} className="panel overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 fill-mode-both" style={{ animationDelay: '300ms' }}>
+        <div className="px-6 py-4 border-b border-app-border flex items-center gap-2">
+          <BarChart2 className="w-4 h-4 text-text-secondary" />
+          <h3 className="text-sm font-bold text-text-primary capitalize">
             {activeTab.replace(/_/g, ' ')} Report
           </h3>
           {!loading && data.length > 0 && (

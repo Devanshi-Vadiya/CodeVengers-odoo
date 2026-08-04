@@ -106,8 +106,12 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-app-border/50">
-            {sorted.map(log => (
-              <tr key={log.id} className="hover:bg-surface-raised/30 transition-colors group">
+            {sorted.map((log, index) => (
+              <tr 
+                key={log.id} 
+                className="hover:bg-surface-raised/30 transition-colors group animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
                 {/* Vehicle */}
                 <td className="px-5 py-4">
                   <div className="flex flex-col gap-0.5">
