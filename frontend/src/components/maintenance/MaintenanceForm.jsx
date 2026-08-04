@@ -27,14 +27,15 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-app-border animate-in fade-in zoom-in-95 duration-300 slide-in-from-bottom-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} />
+      <div className="relative w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-slate-200 z-10 animate-in zoom-in-95 duration-200 my-auto">
 
-        <div className="px-6 py-4 border-b border-app-border flex items-center justify-between shrink-0">
-          <h2 className="text-lg font-display font-bold text-text-primary tracking-tight">Log Maintenance</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-base-mid transition-colors focus:outline-none">
-            <X className="w-5 h-5" />
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50">
+          <h2 className="text-lg font-display font-bold tracking-tight" style={{ color: '#0F172A' }}>Log Maintenance</h2>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none">
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -47,7 +48,7 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Vehicle</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Vehicle</label>
             <select value={formData.vehicle_id} onChange={e => setFormData({ ...formData, vehicle_id: e.target.value })} className={INPUT_CLS} disabled={loading}>
               <option value="">{loading ? 'Loading vehicles...' : 'Select a vehicle'}</option>
               {vehicles?.map(v => <option key={v.id} value={v.id}>{v.reg_number} - {v.name}</option>)}
@@ -56,7 +57,7 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Priority</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Priority</label>
             <select value={formData.priority} onChange={e => setFormData({ ...formData, priority: e.target.value })} className={INPUT_CLS}>
               <option value="High">High</option>
               <option value="Medium">Medium</option>
@@ -65,18 +66,18 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Estimated Cost ($)</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Estimated Cost ($)</label>
             <input type="number" min="0" step="0.01" value={formData.cost} onChange={e => setFormData({ ...formData, cost: e.target.value })} className={`${INPUT_CLS} font-mono`} placeholder="e.g. 500.00" />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-text-secondary uppercase tracking-wider">Description</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
             <textarea value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className={`${INPUT_CLS} min-h-[100px] resize-none`} placeholder="Describe the issue or required service..." />
           </div>
         </form>
 
-        <div className="px-6 py-4 border-t border-app-border flex items-center justify-end gap-3 shrink-0 bg-base">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold border border-app-border text-text-secondary hover:bg-base-mid transition-colors focus:outline-none">
+        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-slate-50">
+          <button type="button" onClick={onClose} className="px-4 py-2.5 text-sm font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors focus:outline-none">
             Cancel
           </button>
           <button onClick={handleSubmit} className="btn-primary">
