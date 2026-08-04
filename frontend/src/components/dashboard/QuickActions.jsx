@@ -7,7 +7,7 @@ const ACTIONS = [
     label: 'Register Vehicle',
     icon: Truck,
     path: '/vehicles',
-    accent: '#F5A623',
+    accent: '#22C55E',
     description: 'Add a new vehicle to the fleet'
   },
   {
@@ -23,7 +23,7 @@ const ACTIONS = [
     label: 'Log Maintenance',
     icon: Wrench,
     path: '/maintenance',
-    accent: '#10B981',
+    accent: '#F59E0B',
     description: 'Flag a vehicle for service'
   }
 ];
@@ -32,8 +32,8 @@ export default function QuickActions() {
   const navigate = useNavigate();
 
   return (
-    <div className="panel p-6">
-      <h3 className="text-base font-bold font-display text-text-primary mb-5">Quick Actions</h3>
+    <div className="panel p-5">
+      <h3 className="text-sm font-bold font-display mb-4" style={{ color: '#0F172A' }}>Quick Actions</h3>
       <div className="flex flex-col gap-3">
         {ACTIONS.map(action => {
           const Icon = action.icon;
@@ -42,7 +42,7 @@ export default function QuickActions() {
               key={action.id}
               id={action.id}
               onClick={() => navigate(action.path)}
-              className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group text-left hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal"
+              className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group text-left hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal/30"
               style={{
                 backgroundColor: `${action.accent}10`,
                 border: `1px solid ${action.accent}28`,

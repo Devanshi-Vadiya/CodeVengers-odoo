@@ -1,19 +1,18 @@
 import { useState } from 'react';
-import { Plus, AlertCircle, Wrench, X } from 'lucide-react';
+import { Plus, AlertCircle, X, Check } from 'lucide-react';
 import { useMaintenance } from '../hooks/useMaintenance';
 import { useAuth } from '../context/AuthContext';
 import { ROLES } from '../constants/roles';
 import MaintenanceList, { MaintenanceListSkeleton } from '../components/maintenance/MaintenanceList';
 import MaintenanceForm from '../components/maintenance/MaintenanceForm';
-import vehicleService from '../services/vehicleService';
+import PredictiveMaintenanceWidget from '../components/vehicles/PredictiveMaintenanceWidget';
 
 export default function MaintenancePage() {
   const { logs, loading, error, createLog, closeLog } = useMaintenance();
   const { role } = useAuth();
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [toast, setToast] = useState(null); // { message: string, type: 'success' | 'error' }
+  const [toast, setToast] = useState(null);
 
-  // Only fleet manager or safety officer can log/close maintenance
   const canAction = role === ROLES.MANAGER || role === ROLES.SAFETY;
 
   const showToast = (message, type = 'success') => {
@@ -25,22 +24,26 @@ export default function MaintenancePage() {
     try {
       const newLog = await createLog(data);
       setIsFormOpen(false);
-      
-      // The backend will have set the vehicle to 'in_shop'
-      showToast(`Vehicle ${newLog.vehicle?.reg_number || data.vehicle_id} is now hidden from trip dispatch.`, 'success');
+      showToast(
+        `Vehicle ${newLog.vehicle?.reg_number || data.vehicle_id} is now hidden from trip dispatch.`,
+        'success'
+      );
     } catch (err) {
-      // Error is handled by hook, but we can also toast it
       showToast(err.message, 'error');
     }
   };
 
   const handleClose = async (log) => {
-    const notes = window.prompt(`Enter closing notes for Maintenance Log on ${log.vehicle?.reg_number}:`);
-    if (notes === null) return; // User cancelled
-
+    const notes = window.prompt(
+      `Enter closing notes for Maintenance Log on ${log.vehicle?.reg_number}:`
+    );
+    if (notes === null) return;
     try {
       await closeLog(log.id, notes);
-      showToast(`Maintenance completed. Vehicle ${log.vehicle?.reg_number} is now available for dispatch.`, 'success');
+      showToast(
+        `Maintenance completed. Vehicle ${log.vehicle?.reg_number} is now available for dispatch.`,
+        'success'
+      );
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -48,55 +51,66 @@ export default function MaintenancePage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 h-full flex flex-col">
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight">Predictive <em style={{ fontStyle: 'italic', fontWeight: 600 }}>Maintenance</em></h1>
-          <p className="text-text-secondary mt-1">Track and manage vehicle repairs and inspections.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: '#0F172A' }}>
+            Predictive <span style={{ color: '#22C55E' }}>Maintenance</span>
+          </h1>
+          <p className="text-sm mt-1" style={{ color: '#64748B' }}>
+            Track and manage vehicle repairs and inspections.
+          </p>
         </div>
         {canAction && (
-          <button
-            onClick={() => setIsFormOpen(true)}
-            style={{ backgroundColor: '#F5A623', color: '#0A1628' }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold hover:brightness-110 transition-all active:scale-95 focus:outline-none shadow-lg shadow-accent-signal/20"
-          >
+          <button onClick={() => setIsFormOpen(true)} className="btn-primary">
             <Plus className="w-4 h-4" /> Log Maintenance
           </button>
         )}
       </div>
 
-      {/* Global Toast Banner */}
+      {/* AI Predictive Maintenance Score Widget */}
+      <PredictiveMaintenanceWidget vehicleId={1} />
+
+      {/* Toast Banner */}
       {toast && (
-        <div className={`shrink-0 p-4 rounded-xl flex items-center justify-between border shadow-lg animate-in fade-in slide-in-from-top-4 ${
-          toast.type === 'success' 
-            ? 'bg-status-available/10 border-status-available/20 text-status-available' 
-            : 'bg-status-shop/10 border-status-shop/20 text-status-shop'
-        }`}>
+        <div
+          className="shrink-0 px-4 py-3.5 rounded-xl flex items-center justify-between border animate-in fade-in slide-in-from-top-4"
+          style={
+            toast.type === 'success'
+              ? { backgroundColor: '#F0FDF4', borderColor: 'rgba(34,197,94,0.25)', color: '#16A34A' }
+              : { backgroundColor: '#FEF2F2', borderColor: 'rgba(239,68,68,0.25)', color: '#DC2626' }
+          }
+        >
           <div className="flex items-center gap-3">
-            {toast.type === 'success' ? <Wrench className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
+            {toast.type === 'success'
+              ? <Check className="w-5 h-5 shrink-0" />
+              : <AlertCircle className="w-5 h-5 shrink-0" />
+            }
             <span className="font-medium text-sm">{toast.message}</span>
           </div>
-          <button onClick={() => setToast(null)} className="p-1 hover:bg-black/10 rounded-lg transition-colors">
+          <button
+            onClick={() => setToast(null)}
+            className="p-1 rounded-lg transition-colors hover:opacity-60"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       {error && !logs.length ? (
         <div className="panel p-12 flex flex-col items-center justify-center text-center">
-          <AlertCircle className="w-12 h-12 text-status-shop mb-4 opacity-50" />
-          <h3 className="text-lg font-bold text-text-primary mb-1">Failed to load</h3>
-          <p className="text-text-secondary">{error}</p>
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4" style={{ backgroundColor: '#FEF3C7' }}>
+            <AlertCircle className="w-7 h-7" style={{ color: '#F59E0B', opacity: 0.8 }} />
+          </div>
+          <h3 className="text-lg font-bold mb-1" style={{ color: '#0F172A' }}>Failed to load</h3>
+          <p style={{ color: '#64748B' }}>{error}</p>
         </div>
       ) : loading ? (
         <MaintenanceListSkeleton />
       ) : (
-        <MaintenanceList 
-          logs={logs} 
-          canAction={canAction} 
-          onClose={handleClose} 
-        />
+        <MaintenanceList logs={logs} canAction={canAction} onClose={handleClose} />
       )}
 
       <MaintenanceForm

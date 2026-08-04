@@ -5,23 +5,26 @@ import CostSummaryCard from '../components/finance/CostSummaryCard';
 import FuelLogForm from '../components/finance/FuelLogForm';
 import ExpenseForm from '../components/finance/ExpenseForm';
 
-// Mock vehicles — replaces API call when backend is unavailable
 const MOCK_VEHICLES = [
-  { id: 101, reg_number: 'TRK-001', name: 'Freightliner Cascadia' },
-  { id: 102, reg_number: 'TRK-002', name: 'Volvo VNL 860' },
-  { id: 103, reg_number: 'TRK-003', name: 'Kenworth T680' },
+  { id: 1, reg_number: 'TRK-001', name: 'Freightliner Cascadia' },
+  { id: 2, reg_number: 'TRK-002', name: 'Volvo VNL 860' },
+  { id: 3, reg_number: 'VAN-001', name: 'Ford Transit' },
 ];
 
 function Toast({ message, type, onClose }) {
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl border animate-in slide-in-from-bottom-6 duration-300 ${
+      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl border animate-in slide-in-from-bottom-6 duration-300`}
+      style={
         type === 'success'
-          ? 'bg-status-available/10 border-status-available/20 text-status-available'
-          : 'bg-status-shop/10 border-status-shop/20 text-status-shop'
-      }`}
+          ? { backgroundColor: '#F0FDF4', borderColor: 'rgba(34,197,94,0.25)', color: '#16A34A' }
+          : { backgroundColor: '#FEF2F2', borderColor: 'rgba(239,68,68,0.25)', color: '#DC2626' }
+      }
     >
-      {type === 'success' ? <Check className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
+      {type === 'success'
+        ? <Check className="w-5 h-5 shrink-0" />
+        : <AlertCircle className="w-5 h-5 shrink-0" />
+      }
       <span className="font-medium text-sm">{message}</span>
       <button onClick={onClose} className="ml-2 p-0.5 hover:opacity-70 transition-opacity">
         <X className="w-4 h-4" />
@@ -30,12 +33,10 @@ function Toast({ message, type, onClose }) {
   );
 }
 
-// Fully custom dark dropdown — avoids the browser's native white popup
 function VehicleDropdown({ vehicles, selected, onSelect }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
     document.addEventListener('mousedown', handler);
@@ -44,64 +45,64 @@ function VehicleDropdown({ vehicles, selected, onSelect }) {
 
   return (
     <div ref={ref} className="relative min-w-[260px]">
-      {/* Trigger */}
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all focus:outline-none"
         style={{
           backgroundColor: '#FFFFFF',
-          border: '1px solid #E8E2D8',
-          color: selected ? '#1C2333' : '#6B7280',
-          boxShadow: '0 1px 3px rgba(28,35,51,0.07)'
+          border: `1px solid ${open ? '#22C55E' : '#E2E8F0'}`,
+          color: selected ? '#0F172A' : '#94A3B8',
+          boxShadow: open ? '0 0 0 3px rgba(34,197,94,0.10)' : '0 1px 3px rgba(15,23,42,0.06)',
         }}
-        className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-signal hover:border-accent-signal/50"
       >
-        <Wallet className="w-4 h-4 text-accent-signal shrink-0" />
+        <Wallet className="w-4 h-4 shrink-0" style={{ color: '#22C55E' }} />
         <span className="flex-1 text-left truncate">
           {selected ? `${selected.reg_number} — ${selected.name}` : 'Select a vehicle…'}
         </span>
         <ChevronDown
-          className="w-4 h-4 text-text-secondary shrink-0 transition-transform duration-200"
-          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          className="w-4 h-4 shrink-0 transition-transform duration-200"
+          style={{ color: '#94A3B8', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
         />
       </button>
 
-      {/* Menu */}
       {open && (
         <div
+          className="absolute z-50 top-full mt-1.5 w-full rounded-xl overflow-hidden"
           style={{
             backgroundColor: '#FFFFFF',
-            border: '1px solid #E8E2D8',
-            boxShadow: '0 8px 32px rgba(28,35,51,0.14)',
+            border: '1px solid #E2E8F0',
+            boxShadow: '0 8px 32px rgba(15,23,42,0.12)',
           }}
-          className="absolute z-50 top-full mt-1.5 w-full rounded-xl overflow-hidden"
         >
-          {/* Empty option */}
           <button
             type="button"
             onClick={() => { onSelect(null); setOpen(false); }}
-            style={{ color: '#6B7280' }}
-            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-base-mid transition-colors text-left"
+            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left"
+            style={{ color: '#94A3B8' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F7FA'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <span className="w-4 h-4 shrink-0" />
             Select a vehicle…
           </button>
-          {/* Divider */}
-          <div style={{ borderTop: '1px solid #22335A' }} />
+          <div style={{ borderTop: '1px solid #E2E8F0' }} />
           {vehicles.map(v => (
             <button
               key={v.id}
               type="button"
               onClick={() => { onSelect(v); setOpen(false); }}
-              style={{ color: selected?.id === v.id ? '#F5A623' : '#1C2333' }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-base-mid transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left"
+              style={{ color: selected?.id === v.id ? '#16A34A' : '#0F172A' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F0FDF4'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <Check
                 className="w-4 h-4 shrink-0"
-                style={{ opacity: selected?.id === v.id ? 1 : 0, color: '#F5A623' }}
+                style={{ opacity: selected?.id === v.id ? 1 : 0, color: '#22C55E' }}
               />
               <span className="font-mono font-semibold">{v.reg_number}</span>
-              <span style={{ color: '#8B9BB8' }}>— {v.name}</span>
+              <span style={{ color: '#94A3B8' }}>— {v.name}</span>
             </button>
           ))}
         </div>
@@ -120,9 +121,7 @@ export default function FinancePage() {
   const { costs, loading: costsLoading, fetchCosts, submitFuelLog, submitExpense } = useFinance();
 
   useEffect(() => {
-    if (selectedVehicle) {
-      fetchCosts(selectedVehicle.id);
-    }
+    if (selectedVehicle) fetchCosts(selectedVehicle.id);
   }, [selectedVehicle, fetchCosts]);
 
   const showToast = (message, type = 'success') => {
@@ -158,40 +157,29 @@ export default function FinancePage() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-fraunces font-bold text-text-primary tracking-tight">Fleet <em style={{ fontStyle: 'italic', fontWeight: 600 }}>Finance</em></h1>
-          <p className="text-text-secondary mt-1">Track fuel costs and operational expenses per vehicle.</p>
+          <h1 className="text-2xl font-display font-bold tracking-tight" style={{ color: '#0F172A' }}>
+            Fleet <span style={{ color: '#22C55E' }}>Finance</span>
+          </h1>
+          <p className="text-sm mt-1" style={{ color: '#64748B' }}>
+            Track fuel costs and operational expenses per vehicle.
+          </p>
         </div>
-
-        {/* Vehicle Selector — fully custom dark dropdown */}
-        <VehicleDropdown
-          vehicles={vehicles}
-          selected={selectedVehicle}
-          onSelect={setSelectedVehicle}
-        />
+        <VehicleDropdown vehicles={vehicles} selected={selectedVehicle} onSelect={setSelectedVehicle} />
       </div>
 
-      {/* Cost Summary */}
       <CostSummaryCard costs={costs} loading={costsLoading} />
 
-      {/* Forms */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <FuelLogForm
-          onSubmit={handleFuelSubmit}
-          loading={fuelLoading}
-          selectedVehicleId={selectedVehicle?.id}
-        />
-        <ExpenseForm
-          onSubmit={handleExpenseSubmit}
-          loading={expenseLoading}
-          selectedVehicleId={selectedVehicle?.id}
-        />
+        <FuelLogForm onSubmit={handleFuelSubmit} loading={fuelLoading} selectedVehicleId={selectedVehicle?.id} />
+        <ExpenseForm onSubmit={handleExpenseSubmit} loading={expenseLoading} selectedVehicleId={selectedVehicle?.id} />
       </div>
 
       {!selectedVehicle && (
-        <p className="text-center text-sm text-text-secondary py-4 animate-pulse">
+        <p className="text-center text-sm py-4" style={{ color: '#94A3B8' }}>
           ↑ Select a vehicle above to enable the forms and view cost summary.
         </p>
       )}
@@ -200,4 +188,3 @@ export default function FinancePage() {
     </div>
   );
 }
-

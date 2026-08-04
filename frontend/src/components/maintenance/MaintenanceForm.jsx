@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertCircle } from 'lucide-react';
-import vehicleService from '../../services/vehicleService';
 
-const INPUT_CLS = "w-full bg-base-mid border border-app-border rounded-xl px-4 py-2.5 text-sm font-medium text-text-primary focus:outline-none focus:border-accent-signal focus:ring-1 focus:ring-accent-signal transition-colors appearance-none disabled:opacity-50";
+const INPUT_CLS = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/15 transition-colors appearance-none disabled:opacity-50";
 
 export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
   const [vehicles, setVehicles] = useState([]);
@@ -23,7 +23,8 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
       setLoading(true);
       let data;
       try {
-        data = await vehicleService.getAll();
+        const res = await vehicleService.getAll();
+        data = res.data ?? res;
       } catch {
         data = [
           { id: 101, reg_number: 'TRK-001', name: 'Freightliner Cascadia' },
@@ -49,9 +50,10 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-app-border">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose} />
+      <div className="relative w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden bg-white border border-slate-200 z-10 animate-in zoom-in-95 duration-200 my-auto">
 
         <div className="px-6 py-4 border-b border-app-border flex items-center justify-between shrink-0">
           <h2 className="text-lg font-display font-bold text-text-primary tracking-tight">Log Maintenance</h2>
@@ -100,11 +102,12 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold border border-app-border text-text-secondary hover:bg-base-mid transition-colors focus:outline-none">
             Cancel
           </button>
-          <button onClick={handleSubmit} style={{ backgroundColor: '#F5A623', color: '#1C2333' }} className="px-4 py-2 rounded-lg text-sm font-bold hover:brightness-105 transition-all active:scale-95 focus:outline-none">
+          <button onClick={handleSubmit} className="btn-primary">
             Log Maintenance
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
