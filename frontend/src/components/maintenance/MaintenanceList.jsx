@@ -75,10 +75,10 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
 
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase()) {
-      case 'high': return 'text-status-shop bg-status-shop/10 border-status-shop/20';
-      case 'medium': return 'text-accent-signal bg-accent-signal/10 border-accent-signal/20';
-      case 'low': return 'text-status-available bg-status-available/10 border-status-available/20';
-      default: return 'text-text-secondary bg-surface-raised border-app-border';
+      case 'high':   return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'low':    return 'text-green-600 bg-green-50 border-green-200';
+      default:       return 'text-slate-500 bg-slate-50 border-slate-200';
     }
   };
 
@@ -150,7 +150,7 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
                     {log.status === 'open' && (
                       <button
                         onClick={() => onClose(log)}
-                        style={{ backgroundColor: '#10B981', color: '#fff' }}
+                        style={{ backgroundColor: '#22C55E', color: '#fff' }}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg hover:brightness-110 transition-all opacity-0 group-hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-status-available/50 focus-visible:opacity-100"
                       >
                         <Check className="w-3.5 h-3.5" /> Close

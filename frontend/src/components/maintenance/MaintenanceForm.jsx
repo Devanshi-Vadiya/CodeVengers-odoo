@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertCircle } from 'lucide-react';
 import { useVehicles } from '../../hooks/useVehicles';
 
-const INPUT_CLS = "w-full bg-base-mid border border-app-border rounded-xl px-4 py-2.5 text-sm font-medium text-text-primary focus:outline-none focus:border-accent-signal focus:ring-1 focus:ring-accent-signal transition-colors appearance-none disabled:opacity-50";
+const INPUT_CLS = "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/15 transition-colors appearance-none disabled:opacity-50";
 
 export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
   const { vehicles, loading, error: vehiclesError } = useVehicles();
@@ -78,11 +79,12 @@ export default function MaintenanceForm({ isOpen, onClose, onSubmit }) {
           <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold border border-app-border text-text-secondary hover:bg-base-mid transition-colors focus:outline-none">
             Cancel
           </button>
-          <button onClick={handleSubmit} style={{ backgroundColor: '#F5A623', color: '#1C2333' }} className="px-4 py-2 rounded-lg text-sm font-bold hover:brightness-105 transition-all active:scale-95 focus:outline-none">
+          <button onClick={handleSubmit} className="btn-primary">
             Log Maintenance
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

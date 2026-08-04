@@ -14,8 +14,8 @@ export function useFinance() {
     try {
       setLoading(true);
       setError(null);
-      const data = await financeService.getCosts(vehicleId);
-      setCosts(data);
+      const res = await financeService.getCosts(vehicleId);
+      setCosts(res.data ?? res);
     } catch (err) {
       setError(err.message || 'Failed to fetch costs');
     } finally {

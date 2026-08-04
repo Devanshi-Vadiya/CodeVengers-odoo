@@ -1,19 +1,33 @@
-import api from './api';
+import { maintenance, nextIdFor, delay } from './mockDb';
 
 const maintenanceService = {
   getAll: async () => {
-    const response = await api.get('/maintenance');
-    return response.data.data;
+    await delay(300);
+    return { data: [...maintenance].sort((a, b) => b.id - a.id) };
   },
 
   create: async (data) => {
-    const response = await api.post('/maintenance', data);
-    return response.data.data;
+    await delay(400);
+    const newRecord = {
+      id: nextIdFor('maintenance'),
+      ...data,
+      status: 'open',
+      opened_at: new Date().toISOString(),
+      closing_notes: null,
+      vehicle: { id: data.vehicle_id, name: `Mock Vehicle ${data.vehicle_id}` }
+    };
+    maintenance.unshift(newRecord);
+    return { data: newRecord };
   },
 
   close: async (id, closingNotes) => {
-    const response = await api.patch(`/maintenance/${id}/close`, { closing_notes: closingNotes });
-    return response.data.data;
+    await delay(400);
+    const record = maintenance.find(m => m.id === Number(id));
+    if (record) {
+      record.status = 'closed';
+      record.closing_notes = closingNotes;
+    }
+    return { data: record };
   }
 };
 

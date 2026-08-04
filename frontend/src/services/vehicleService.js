@@ -1,34 +1,54 @@
-import api from './api';
+import { vehicles, fuelLogs, expenses, nextIdFor, delay } from './mockDb';
 
 const vehicleService = {
   getAll: async (params = {}) => {
-    const response = await api.get('/vehicles', { params });
-    return response.data;
+    await delay(300);
+    let result = [...vehicles];
+    if (params.status) result = result.filter(v => v.status === params.status);
+    return { data: result.sort((a, b) => b.id - a.id) };
   },
 
   getById: async (id) => {
-    const response = await api.get(`/vehicles/${id}`);
-    return response.data;
+    await delay(200);
+    const vehicle = vehicles.find(v => v.id === Number(id));
+    if (!vehicle) throw new Error('Vehicle not found');
+    return { data: vehicle };
   },
 
   create: async (data) => {
-    const response = await api.post('/vehicles', data);
-    return response.data;
+    await delay(400);
+    const newVehicle = {
+      id: nextIdFor('vehicles'),
+      ...data,
+      status: 'available',
+    };
+    vehicles.unshift(newVehicle);
+    return { data: newVehicle };
   },
 
   update: async (id, data) => {
-    const response = await api.put(`/vehicles/${id}`, data);
-    return response.data;
+    await delay(400);
+    const vehicle = vehicles.find(v => v.id === Number(id));
+    if (vehicle) Object.assign(vehicle, data);
+    return { data: vehicle };
   },
 
   remove: async (id) => {
-    const response = await api.delete(`/vehicles/${id}`);
-    return response.data;
+    await delay(300);
+    const index = vehicles.findIndex(v => v.id === Number(id));
+    if (index !== -1) vehicles.splice(index, 1);
+    return { success: true };
   },
 
   getCosts: async (id) => {
-    const response = await api.get(`/vehicles/${id}/costs`);
-    return response.data;
+    await delay(300);
+    const vId = Number(id);
+    return {
+      data: {
+        fuelLogs: fuelLogs.filter(f => f.vehicle_id === vId),
+        expenses: expenses.filter(e => e.vehicle_id === vId)
+      }
+    };
   },
 };
 

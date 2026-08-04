@@ -10,8 +10,8 @@ export function useMaintenance() {
     try {
       setLoading(true);
       setError(null);
-      const data = await maintenanceService.getAll();
-      setLogs(data);
+      const res = await maintenanceService.getAll();
+      setLogs(res.data ?? res);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch maintenance logs');
     } finally {
@@ -22,7 +22,8 @@ export function useMaintenance() {
   const createLog = async (data) => {
     try {
       setError(null);
-      const newLog = await maintenanceService.create(data);
+      const res = await maintenanceService.create(data);
+      const newLog = res.data ?? res;
       // Optimistically update
       setLogs(prev => [newLog, ...prev]);
       return newLog;
@@ -36,7 +37,8 @@ export function useMaintenance() {
   const closeLog = async (id, closingNotes) => {
     try {
       setError(null);
-      const updatedLog = await maintenanceService.close(id, closingNotes);
+      const res = await maintenanceService.close(id, closingNotes);
+      const updatedLog = res.data ?? res;
       // Optimistically update
       setLogs(prev => prev.map(log => log.id === id ? updatedLog : log));
       return updatedLog;
