@@ -1,8 +1,18 @@
+import api from './api';
 import { vehicles, maintenance, delay } from './mockDb';
 
 const aiService = {
   getPredictiveMaintenance: async (vehicleId) => {
-    await delay(300);
+    try {
+      const res = await api.get(`/ai/predictive-maintenance/${vehicleId}`, { timeout: 3500 });
+      if (res.data?.data) {
+        return res.data;
+      }
+    } catch (err) {
+      console.warn('[aiService.getPredictiveMaintenance] Fallback to mockDb:', err.message);
+    }
+
+    await delay(200);
     const vehicle = vehicles.find(v => v.id === Number(vehicleId)) || vehicles[0];
     if (!vehicle) {
       return {
@@ -14,11 +24,9 @@ const aiService = {
       };
     }
 
-    // Closed maintenance for this vehicle
     const closedLogs = maintenance.filter(m => m.vehicle_id === vehicle.id && m.status === 'closed');
     const kmSinceLastService = closedLogs.length ? 1200 : (vehicle.id * 1800 + 1500);
 
-    // Heuristic calculations matching spec v1.0
     const avgSafetyScore = 88;
     const vehicleAgeYears = Math.max(1, 2026 - (vehicle.year || 2021));
 
@@ -50,8 +58,16 @@ const aiService = {
   },
 
   getFuelAnomalies: async () => {
-    await delay(300);
-    // Mock fuel anomaly findings
+    try {
+      const res = await api.get('/ai/fuel-anomalies', { timeout: 3500 });
+      if (res.data?.data) {
+        return res.data;
+      }
+    } catch (err) {
+      console.warn('[aiService.getFuelAnomalies] Fallback to mockDb:', err.message);
+    }
+
+    await delay(200);
     return {
       data: [
         {

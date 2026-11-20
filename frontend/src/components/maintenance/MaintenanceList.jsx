@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronUp, ChevronDown, Check, FileText } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ChevronUp, ChevronDown, Check, FileText, Filter } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
 
 const COLUMNS = [
@@ -47,31 +47,45 @@ export function MaintenanceListSkeleton() {
 }
 
 export default function MaintenanceList({ logs, canAction, onClose }) {
+  const [statusFilter, setStatusFilter] = useState('open'); // Default to pending (open) logs
   const [sortKey, setSortKey] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
+
+  // Filter logs by selected status ('open' / 'closed' / 'all')
+  const filtered = useMemo(() => {
+    if (statusFilter === 'all') return logs;
+    return logs.filter(log => (log.status || '').toLowerCase() === statusFilter.toLowerCase());
+  }, [logs, statusFilter]);
+
+  const counts = useMemo(() => {
+    const openCount = logs.filter(l => (l.status || '').toLowerCase() === 'open').length;
+    const closedCount = logs.filter(l => (l.status || '').toLowerCase() === 'closed').length;
+    return { open: openCount, closed: closedCount, all: logs.length };
+  }, [logs]);
 
   const handleSort = (key) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
     else { setSortKey(key); setSortDir('desc'); }
   };
 
-  const sorted = [...logs].sort((a, b) => {
-    if (!sortKey) return 0;
-    let av = a[sortKey];
-    let bv = b[sortKey];
-    
-    // Flatten nested objects for sorting if needed
-    if (sortKey === 'vehicle') {
-      av = a.vehicle?.reg_number;
-      bv = b.vehicle?.reg_number;
-    }
+  const sorted = useMemo(() => {
+    return [...filtered].sort((a, b) => {
+      if (!sortKey) return 0;
+      let av = a[sortKey];
+      let bv = b[sortKey];
 
-    if (av === bv) return 0;
-    
-    return sortDir === 'asc' 
-      ? String(av).localeCompare(String(bv)) 
-      : String(bv).localeCompare(String(av));
-  });
+      if (sortKey === 'vehicle') {
+        av = a.vehicle?.reg_number;
+        bv = b.vehicle?.reg_number;
+      }
+
+      if (av === bv) return 0;
+
+      return sortDir === 'asc'
+        ? String(av).localeCompare(String(bv))
+        : String(bv).localeCompare(String(av));
+    });
+  }, [filtered, sortKey, sortDir]);
 
   const getPriorityColor = (priority) => {
     switch (priority?.toLowerCase()) {
@@ -84,6 +98,58 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
 
   return (
     <div className="panel overflow-hidden">
+      {/* Status Filter Bar */}
+      <div className="px-5 py-3.5 border-b border-app-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-slate-400" />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Filter Status:</span>
+          
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-800 outline-none focus:border-[#22C55E] focus:ring-2 focus:ring-[#22C55E]/15 cursor-pointer shadow-sm"
+          >
+            <option value="open">Pending Logs ({counts.open})</option>
+            <option value="closed">Closed Logs ({counts.closed})</option>
+            <option value="all">All Logs ({counts.all})</option>
+          </select>
+        </div>
+
+        {/* Quick Filter Pill Buttons */}
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setStatusFilter('open')}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${
+              statusFilter === 'open'
+                ? 'bg-[#F59E0B] text-white border-[#F59E0B]'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            Pending ({counts.open})
+          </button>
+          <button
+            onClick={() => setStatusFilter('closed')}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${
+              statusFilter === 'closed'
+                ? 'bg-[#22C55E] text-white border-[#22C55E]'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            Closed ({counts.closed})
+          </button>
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${
+              statusFilter === 'all'
+                ? 'bg-slate-800 text-white border-slate-800'
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            All ({counts.all})
+          </button>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -147,7 +213,7 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
                 {/* Action */}
                 {canAction && (
                   <td className="px-5 py-4 text-right">
-                    {log.status === 'open' && (
+                    {(log.status || '').toLowerCase() === 'open' && (
                       <button
                         onClick={() => onClose(log)}
                         style={{ backgroundColor: '#22C55E', color: '#fff' }}
@@ -163,7 +229,9 @@ export default function MaintenanceList({ logs, canAction, onClose }) {
             {sorted.length === 0 && (
               <tr>
                 <td colSpan={canAction ? 7 : 6} className="px-5 py-12 text-center">
-                  <span className="text-sm font-medium text-text-secondary">No maintenance records found</span>
+                  <span className="text-sm font-medium text-text-secondary">
+                    No {statusFilter === 'open' ? 'pending' : statusFilter === 'closed' ? 'closed' : ''} maintenance records found
+                  </span>
                 </td>
               </tr>
             )}

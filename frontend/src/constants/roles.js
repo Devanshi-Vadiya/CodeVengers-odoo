@@ -5,6 +5,11 @@ export const ROLES = {
   ANALYST: 'analyst',
 };
 
+export const isManager = (role) => role === 'manager' || role === 'fleet_manager';
+export const isDriver = (role) => role === 'driver';
+export const isSafety = (role) => role === 'safety' || role === 'safety_officer';
+export const isAnalyst = (role) => role === 'analyst' || role === 'financial_analyst';
+
 export const ROLE_DETAILS = {
   [ROLES.MANAGER]: {
     id: ROLES.MANAGER,

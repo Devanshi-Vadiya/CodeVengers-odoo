@@ -16,6 +16,7 @@ import Trips from '../pages/Trips';
 import Maintenance from '../pages/Maintenance';
 import Finance from '../pages/Finance';
 import Reports from '../pages/Reports';
+import Settings from '../pages/Settings';
 
 // Safety-specific pages
 import Inspections from '../pages/Inspections';
@@ -26,7 +27,7 @@ import InspectionHistory from '../pages/InspectionHistory';
 import MyTrips from '../pages/MyTrips';
 
 // Shared stub pages (coming soon placeholders)
-import { VehicleInfo, TripHistory, Profile, Expenses, Analytics, SettingsPage } from '../pages/Stubs';
+import { VehicleInfo, TripHistory, Profile, Expenses, Analytics } from '../pages/Stubs';
 
 export default function AppRoutes() {
   return (
@@ -51,7 +52,7 @@ export default function AppRoutes() {
         <Route path="/maintenance" element={<ProtectedRoute allowedRoles={PERMISSIONS.MAINTENANCE}><Maintenance /></ProtectedRoute>} />
         <Route path="/finance" element={<ProtectedRoute allowedRoles={PERMISSIONS.FINANCE}><Finance /></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute allowedRoles={PERMISSIONS.REPORTS}><Reports /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute allowedRoles={[ROLES.MANAGER]}><SettingsPage /></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute allowedRoles={[ROLES.MANAGER, ROLES.SAFETY, ROLES.ANALYST, ROLES.DRIVER]}><Settings /></ProtectedRoute>} />
 
         {/* ── Manager + Safety Officer (Drivers page) ── */}
         <Route path="/drivers" element={<ProtectedRoute allowedRoles={PERMISSIONS.DRIVERS}><Drivers /></ProtectedRoute>} />

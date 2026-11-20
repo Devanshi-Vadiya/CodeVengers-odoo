@@ -11,9 +11,11 @@ const connectDB = async () => {
   try {
     await prisma.$connect();
     console.log('✅ PostgreSQL connected successfully via Prisma');
+    return true;
   } catch (error) {
-    console.error('❌ Database connection failed:', error.message);
-    process.exit(1);
+    console.error('⚠️ Database connection notice:', error.message);
+    console.log('ℹ️ Server will continue running for health and settings endpoints.');
+    return false;
   }
 };
 

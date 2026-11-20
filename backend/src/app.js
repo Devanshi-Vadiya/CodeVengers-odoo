@@ -12,6 +12,7 @@ const expenseRoutes = require('./routes/expense.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const reportsRoutes = require('./routes/reports.routes');
 const aiRoutes = require('./routes/ai.routes');
+const settingsRoutes = require('./routes/settings.routes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -49,10 +50,11 @@ app.use('/api/expenses', expenseRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Test route
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, data: { message: 'TransitOps API is running!' } });
+  res.json({ success: true, data: { message: 'TransitOps API is running!', status: 'online' } });
 });
 
 // Error handler (must be last middleware)
