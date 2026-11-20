@@ -34,4 +34,13 @@ api.interceptors.response.use(
   }
 );
 
+export const checkBackendHealth = async () => {
+  try {
+    const res = await api.get('/health', { timeout: 3000 });
+    return { online: true, data: res.data };
+  } catch (err) {
+    return { online: false, error: err.message };
+  }
+};
+
 export default api;

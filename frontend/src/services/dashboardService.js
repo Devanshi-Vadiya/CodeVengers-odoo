@@ -1,42 +1,61 @@
-import { vehicles, trips, maintenance, fuelLogs, delay } from './mockDb';
+import api from './api';
+import { vehicles, trips, maintenance, fuelLogs, drivers, delay } from './mockDb';
 
 const dashboardService = {
   getStats: async () => {
-    await delay(300);
+    try {
+      const res = await api.get('/dashboard/kpis', { timeout: 3500 });
+      if (res.data?.data) {
+        return res.data.data;
+      }
+    } catch (err) {
+      console.warn('[dashboardService.getStats] Fallback to mockDb:', err.message);
+    }
+
+    await delay(200);
     const activeTrips    = trips.filter(t => t.status === 'dispatched').length;
-    const totalVehicles  = vehicles.length;
-    const availDrivers   = 4; // from mock drivers
+    const totalVehicles  = vehicles.filter(v => v.status !== 'retired').length;
+    const availDrivers   = drivers.filter(d => d.status === 'available').length;
     const maintAlerts    = maintenance.filter(m => m.status === 'open').length;
-    const tripsToday     = trips.filter(t => t.created_at?.startsWith('2026-07-12')).length;
-    const fuelSpend7d    = fuelLogs.reduce((s, f) => s + f.total_cost, 0);
-    const dispatched     = trips.filter(t => ['dispatched','completed'].includes(t.status)).length;
-    const total          = trips.length;
-    const dispatchRate   = total ? Math.round((dispatched / total) * 100) : 0;
+    const tripsToday     = trips.filter(t => t.status === 'completed').length;
+    const fuelSpendWeek  = fuelLogs.reduce((acc, f) => acc + (Number(f.cost || f.total_cost) || 0), 0);
+    const totalTrips     = trips.filter(t => t.status !== 'cancelled').length;
+    const completedTrips = trips.filter(t => t.status === 'completed').length;
+    const dispatchRate   = totalTrips > 0 ? Math.round((completedTrips / totalTrips) * 100) : 85;
+
     return {
       totalVehicles,
       activeTrips,
       availableDrivers: availDrivers,
       maintenanceAlerts: maintAlerts,
-      tripsToday,
-      fuelSpend7d,
-      dispatchRate,
+      completedTripsToday: tripsToday,
+      fuelSpendThisWeek: fuelSpendWeek,
+      dispatchRate
     };
   },
 
   getOverdue: async () => {
+    try {
+      const res = await api.get('/dashboard/overdue', { timeout: 3500 });
+      if (res.data?.data) {
+        return res.data.data;
+      }
+    } catch (err) {
+      console.warn('[dashboardService.getOverdue] Fallback to mockDb:', err.message);
+    }
+
     await delay(200);
     return {
       overdue: [
-        { id: 1, type: 'maintenance', label: 'TRK-001 — Engine oil change',      dueDate: '2026-07-08', daysOverdue: 4 },
-        { id: 2, type: 'license',     label: 'Driver D-104 — License expiry',    dueDate: '2026-07-10', daysOverdue: 2 },
+        { id: 1, type: 'maintenance', label: 'TRK-003 — 40,000 km Scheduled Service', dueDate: '2026-07-08', status: 'overdue' },
+        { id: 2, type: 'license',     label: 'Vijay Verma — Commercial License Expired', dueDate: '2026-07-05', status: 'overdue' },
       ],
       upcoming: [
-        { id: 3, type: 'maintenance', label: 'VAN-002 — Tyre rotation due',      dueDate: '2026-07-15', daysOverdue: 0 },
-        { id: 4, type: 'inspection',  label: 'TRK-002 — Annual inspection',      dueDate: '2026-07-18', daysOverdue: 0 },
-      ],
+        { id: 3, type: 'maintenance', label: 'VAN-001 — Brake Pad Inspection', dueDate: '2026-07-18', status: 'upcoming' },
+        { id: 4, type: 'inspection',  label: 'TRK-001 — Annual Emission Test', dueDate: '2026-07-22', status: 'upcoming' },
+      ]
     };
-  },
-
+  }
 };
 
 export default dashboardService;

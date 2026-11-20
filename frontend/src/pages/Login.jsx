@@ -79,7 +79,7 @@ export default function Login() {
 
       {/* Back link */}
       <Link
-        to="/select-role"
+        to="/"
         className="absolute top-6 left-6 flex items-center gap-2 text-sm font-medium transition-colors z-20"
         style={{ color: '#94A3B8' }}
         onMouseEnter={e => e.currentTarget.style.color = '#0F172A'}

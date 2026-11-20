@@ -13,7 +13,7 @@ router.use(authenticate);
 // Get all expenses (fleet_manager and financial_analyst) - optional filters: vehicle_id, type, from, to
 router.get('/', authorize('fleet_manager', 'financial_analyst'), getAllExpenses);
 
-// Create expense (fleet_manager only)
-router.post('/', authorize('fleet_manager'), createExpense);
+// Create expense (fleet_manager and financial_analyst)
+router.post('/', authorize('fleet_manager', 'financial_analyst'), createExpense);
 
 module.exports = router;

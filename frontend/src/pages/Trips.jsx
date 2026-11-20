@@ -9,7 +9,7 @@ import TripForm from '../components/trips/TripForm';
 
 export default function Trips() {
   const { role } = useAuth();
-  const canAction = role === ROLES.MANAGER;
+  const canAction = role === ROLES.MANAGER || role === ROLES.DRIVER;
 
   const { trips, loading, error, refetch, dispatchTrip, completeTrip, cancelTrip } = useTrips();
   const [formOpen, setFormOpen] = useState(false);
