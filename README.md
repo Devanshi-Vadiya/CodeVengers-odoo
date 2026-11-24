@@ -414,8 +414,8 @@ transitops/
 
 | Role | Member |
 |---|---|
-| 🔧 Backend & Business Logic | **Parth Karetiya** |
-| 🎨 Frontend & UX | **Devanshi Vadiya** |
+| 🔧 Backend & Business Logic | **Devanshi Vadiya** |
+| 🎨 Frontend & UX | **Parth Karetiya** |
 
 Built in a single hackathon sprint.
 
