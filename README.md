@@ -12,7 +12,8 @@
 ![Tailwind](https://img.shields.io/badge/TailwindCSS-Styling-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
-![Status](https://img.shields.io/badge/status-hackathon%20build-F5A623?style=flat-square)
+![Status](https://img.shields.io/badge/status-active%20deployment-22C55E?style=flat-square)
+![Live Demo](https://img.shields.io/badge/demo-tran--sit--ops.vercel.app-2563EB?style=flat-square&logo=vercel)
 ![License](https://img.shields.io/badge/license-MIT-8B93A7?style=flat-square)
 ![Team](https://img.shields.io/badge/team-2%20developers-3B82F6?style=flat-square)
 
@@ -49,7 +50,7 @@ Logistics companies still run their fleets on **spreadsheets and paper logbooks*
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
-- [Team](#team)
+- [Authors](#authors)
 
 ---
 
@@ -82,17 +83,22 @@ Access is enforced with real **Role-Based Access Control** — server-side, on e
 
 <div align="center">
 
-**Dashboard**
-![Dashboard](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853941/Screenshot_2026-07-12_161851_cc6xpv.png)
+<p><strong>🌐 Live Application:</strong> <a href="https://tran-sit-ops.vercel.app">https://tran-sit-ops.vercel.app</a></p>
 
-**Trip Dispatch Board**
-![Trips](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853934/Screenshot_2026-07-12_162031_kpqbhi.png)
+### 🚀 Landing & Role-Based Workspace Selection
+![Landing Page](docs/screenshots/landing-page.png)
 
-**Vehicle Registry**
-![Vehicles](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853926/Screenshot_2026-07-12_162103_ukv50v.png)
+### 📊 Operations Command Center (Dashboard)
+![Dashboard](docs/screenshots/dashboard.png)
 
-**Driver Management**
-![Drivers](https://res.cloudinary.com/dagwbyz4e/image/upload/v1783853838/Screenshot_2026-07-12_162138_fvfg6l.png)
+### 🗺️ Kanban Trip Dispatch Board
+![Trip Dispatch Board](docs/screenshots/trips.png)
+
+### 🚐 Real-Time Vehicle Registry
+![Vehicle Registry](docs/screenshots/vehicles.png)
+
+### 🧑‍✈️ Driver Roster & Safety Scores
+![Driver Management](docs/screenshots/drivers.png)
 
 </div>
 
@@ -104,15 +110,15 @@ Access is enforced with real **Role-Based Access Control** — server-side, on e
 
 | Layer | Choice | Why |
 |---|---|---|
-| Frontend | React (Vite) + Tailwind CSS | Instant HMR, zero CSS context-switching under time pressure |
-| Routing | React Router v6 | Minimal setup, protected-route wrapper for RBAC |
-| State | React Context + local state | Only one true global value (auth user) — no Redux overhead |
-| Backend | Node.js + Express | Fast to scaffold, huge ecosystem |
-| Database | PostgreSQL | Strict FK/enum integrity fits this domain's status-driven rules |
-| Auth | JWT + bcrypt | Stateless, simple to verify per-request |
-| Icons | Lucide React | Consistent, tree-shakeable |
-| Charts | Recharts | Simple API, good enough visuals for a 6-hour build |
-| Notifications | react-hot-toast | Every state change gets a toast — cheapest "feels alive" win |
+| Frontend | React (Vite) + Tailwind CSS | Instant HMR, responsive styling, and fast client-side rendering |
+| Routing | React Router v7 | Protected route wrappers enforcing client-side RBAC |
+| State | React Context + local state | Lightweight global authentication session without unnecessary overhead |
+| Backend | Node.js + Express | Fast, modular REST API architecture with clean middleware pipeline |
+| Database | PostgreSQL + Prisma ORM | Strict foreign-key integrity, ACID transactions, and type-safe data modeling |
+| Auth | JWT + bcrypt | Secure, stateless authentication with cryptographic password hashing |
+| Icons | Lucide React | Tree-shakeable, clean, modern UI icon system |
+| Charts | Recharts | Composable SVG chart components for fleet KPIs, fuel trends, and ROI analytics |
+| Notifications | react-hot-toast | Real-time feedback for all CRUD operations and state changes |
 
 </div>
 
@@ -164,26 +170,42 @@ TransitOps enforces these rules **server-side**, verified live in the demo by de
 
 ## Trip Lifecycle
 
+TransitOps enforces a strict state machine for all trips to guarantee that vehicles and drivers cannot be double-booked or dispatched under invalid safety conditions:
+
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft: Create Trip
-    Draft --> Dispatched: Dispatch\n(validates capacity, availability, license)
-    Draft --> Cancelled: Cancel
-    Dispatched --> Completed: Complete\n(enter odometer + fuel)
-    Dispatched --> Cancelled: Cancel
+    [*] --> Draft: Create Trip (Origin, Destination, Cargo)
+    Draft --> Dispatched: Dispatch Trip\n[Verify Capacity + License + Availability]
+    Draft --> Cancelled: Cancel Trip
+    Dispatched --> Completed: Complete Trip\n[Log Final Odometer & Fuel Consumed]
+    Dispatched --> Cancelled: Cancel Trip\n[Emergency / Route Abort]
     Completed --> [*]
     Cancelled --> [*]
 
     note right of Dispatched
-        Vehicle → on_trip
-        Driver → on_trip
+        Atomic Status Sync:
+        • Vehicle status ➔ on_trip
+        • Driver status ➔ on_trip
+        • Dispatched timestamp logged
     end note
 
     note right of Completed
-        Vehicle → available
-        Driver → available
+        Resource Restoration:
+        • Vehicle status ➔ available
+        • Driver status ➔ available
+        • Vehicle odometer updated
+        • Fuel & actual distance logged
     end note
 ```
+
+### Lifecycle Stage Details
+
+| Stage | Trigger / Action | Validation Guards | System & Database Effects |
+|---|---|---|---|
+| **Draft** | Trip creation (`POST /api/trips`) | Valid vehicle and driver IDs provided; origin and destination defined | Trip record created with status `draft`. Vehicle and driver remain `available`. |
+| **Dispatched** | Dispatch command (`PATCH /api/trips/:id/dispatch`) | • Vehicle `status === 'available'`<br/>• Driver `status === 'available'`<br/>• Driver license not expired (`license_expiry > now`)<br/>• Driver not `suspended`<br/>• `cargo_weight <= vehicle.max_capacity` | Atomic PostgreSQL transaction:<br/>1. Trip status updated to `dispatched`<br/>2. Vehicle flipped to `on_trip`<br/>3. Driver flipped to `on_trip`<br/>4. `dispatched_at` timestamp recorded |
+| **Completed** | Trip completion (`PATCH /api/trips/:id/complete`) | Trip must currently be `dispatched`; positive odometer & fuel readings | Atomic PostgreSQL transaction:<br/>1. Trip marked `completed`<br/>2. Vehicle `odometer += actual_distance`<br/>3. Fuel consumed recorded<br/>4. Vehicle & Driver restored to `available`<br/>5. `completed_at` timestamp recorded |
+| **Cancelled** | Trip cancellation (`PATCH /api/trips/:id/cancel`) | Trip must be in `draft` or `dispatched` state | Atomic PostgreSQL transaction:<br/>1. Trip status updated to `cancelled`<br/>2. If dispatched, Vehicle & Driver immediately restored to `available` |
 
 ---
 
@@ -228,49 +250,98 @@ All routes are prefixed `/api`, protected with `Authorization: Bearer <token>`, 
 
 ## Database Schema
 
+TransitOps uses PostgreSQL managed with Prisma ORM. Strict relational constraints, enums, and foreign keys guarantee that fleet operational data remains clean, consistent, and audit-ready:
+
 ```mermaid
 erDiagram
-    USERS ||--o{ DRIVERS : "may be"
-    VEHICLES ||--o{ TRIPS : "assigned to"
-    DRIVERS ||--o{ TRIPS : "assigned to"
-    VEHICLES ||--o{ MAINTENANCE_LOGS : "has"
-    VEHICLES ||--o{ FUEL_LOGS : "has"
-    VEHICLES ||--o{ EXPENSES : "has"
+    User ||--o| Driver : "linked to"
+    Vehicle ||--o{ Trip : "assigned to"
+    Driver ||--o{ Trip : "operates"
+    Vehicle ||--o{ MaintenanceLog : "incurs"
+    Vehicle ||--o{ FuelLog : "logs"
+    Vehicle ||--o{ Expense : "records"
 
-    USERS {
-        uuid id PK
+    User {
+        int id PK
+        string name
         string email UK
         string password_hash
-        enum role
+        UserRole role
+        datetime createdAt
+        datetime updatedAt
     }
-    VEHICLES {
-        uuid id PK
+
+    Vehicle {
+        int id PK
         string reg_number UK
+        string name
         string type
         int max_capacity
         int odometer
         decimal acquisition_cost
-        enum status
+        VehicleStatus status
+        datetime createdAt
+        datetime updatedAt
     }
-    DRIVERS {
-        uuid id PK
-        string license_number
-        date license_expiry
+
+    Driver {
+        int id PK
+        string name
+        string license_number UK
+        string license_category
+        datetime license_expiry
+        string contact
         int safety_score
-        enum status
+        DriverStatus status
+        int userId FK
+        datetime createdAt
+        datetime updatedAt
     }
-    TRIPS {
-        uuid id PK
-        uuid vehicle_id FK
-        uuid driver_id FK
+
+    Trip {
+        int id PK
+        string source
+        string destination
+        int vehicle_id FK
+        int driver_id FK
         int cargo_weight
-        enum status
+        int planned_distance
+        int actual_distance
+        decimal fuel_consumed
+        TripStatus status
+        datetime created_at
+        datetime dispatched_at
+        datetime completed_at
     }
-    MAINTENANCE_LOGS {
-        uuid id PK
-        uuid vehicle_id FK
+
+    MaintenanceLog {
+        int id PK
+        int vehicle_id FK
+        string description
         decimal cost
-        enum status
+        string priority
+        MaintenanceStatus status
+        datetime opened_at
+        datetime closed_at
+        string closing_notes
+    }
+
+    FuelLog {
+        int id PK
+        int vehicle_id FK
+        decimal liters
+        decimal cost
+        datetime date
+        datetime createdAt
+    }
+
+    Expense {
+        int id PK
+        int vehicle_id FK
+        string type
+        decimal amount
+        datetime date
+        datetime createdAt
     }
 ```
 
@@ -381,43 +452,46 @@ VITE_API_BASE_URL=http://localhost:5000/api
 ## Project Structure
 
 ```
-transitops/
+CodeVengers-odoo/
 ├── backend/
+│   ├── db/
+│   │   └── seed.js              # Seed data for users, vehicles, drivers & trips
+│   ├── prisma/
+│   │   ├── schema.prisma        # PostgreSQL Prisma schema & models
+│   │   └── migrations/          # Database migration history
 │   └── src/
-│       ├── config/        # DB connection, env
-│       ├── models/        # Prisma schema-backed models
-│       ├── services/      # ALL business rules live here
-│       ├── controllers/   # Thin — call services, return responses
-│       ├── routes/        # One file per resource
-│       ├── middleware/    # auth, rbac, error handling
-│       └── utils/
+│       ├── config/              # Prisma client & environment variables
+│       ├── controllers/         # HTTP request handlers & API response dispatch
+│       ├── middleware/          # JWT auth, role validation & error handlers
+│       ├── routes/              # Express API route definitions
+│       ├── services/            # Core business logic & database transactions
+│       ├── utils/               # AppError class, formatters & validators
+│       └── server.js            # Express application entrypoint
 ├── frontend/
+│   ├── public/                  # Static assets & favicon
 │   └── src/
-│       ├── components/    # common/ + feature-specific subfolders
-│       ├── pages/         # One file per route
-│       ├── hooks/         # All data-fetching logic
-│       ├── services/      # Pure API-call functions
-│       ├── context/       # Auth context (the one global state)
-│       └── utils/         # statusColors.js, formatters, validators
+│       ├── assets/              # Branding graphics & vector illustrations
+│       ├── components/          # Reusable UI components, Layout, Sidebar, KPI cards
+│       ├── constants/           # Roles, sidebar configurations & status mappings
+│       ├── context/             # AuthContext (JWT session & user profile)
+│       ├── pages/               # Application view routes & role dashboards
+│       ├── services/            # Axios API services with offline fallbacks
+│       ├── App.jsx              # Router & RBAC-protected route definitions
+│       └── main.jsx             # React DOM root entrypoint
 ├── docs/
-│   └── screenshots/
-└── API_CONTRACT.md        # Locked source of truth for both sides
+│   └── screenshots/             # Production UI screenshots & diagrams
+└── README.md                    # Comprehensive platform documentation
 ```
 
 ---
 
-
-
-## Team
+## Authors
 
 <div align="center">
 
-| Role | Member |
-|---|---|
-| 🔧 Backend & Business Logic | **Devanshi Vadiya** |
-| 🎨 Frontend & UX | **Parth Karetiya** |
+### Made by **Devanshi Vadiya** and **Parth Karetiya**
 
-Built in a single hackathon sprint.
+Built to modernize transport logistics and eliminate illegal dispatch decisions through automated system controls and real-time telemetry. TransitOps bridges mission-critical backend validation with a clean, responsive, and intuitive interface designed for managers, drivers, safety officers, and analysts alike.
 
 </div>
 
