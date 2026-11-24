@@ -1,7 +1,7 @@
 import { useOutletContext } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useDashboard } from '../hooks/useDashboard';
-import { ROLE_DETAILS } from '../constants/roles';
+import { ROLE_DETAILS, isDriver, isSafety, isAnalyst } from '../constants/roles';
 import StatsCard, { StatsCardSkeleton } from '../components/dashboard/StatsCard';
 import OverdueList from '../components/dashboard/OverdueList';
 import QuickActions from '../components/dashboard/QuickActions';
@@ -9,15 +9,21 @@ import {
   Car, Map, Users, Wrench, CheckCircle, Fuel, Gauge, Activity, Calendar,
 } from 'lucide-react';
 
-const STAT_DEFS = [
-  { key: 'totalVehicles',       label: 'Total Vehicles',     icon: Car,         accent: 'blue'    },
-  { key: 'activeTrips',         label: 'Active Trips',       icon: Map,         accent: 'green'   },
-  { key: 'availableDrivers',    label: 'Avail. Drivers',     icon: Users,       accent: 'green'   },
-  { key: 'maintenanceAlerts',   label: 'Maint. Alerts',      icon: Wrench,      accent: 'red'     },
-  { key: 'completedTripsToday', label: 'Trips Today',        icon: CheckCircle, accent: 'green'   },
-  { key: 'fuelSpendThisWeek',   label: 'Fuel Spend (7d)',    icon: Fuel,        accent: 'amber',  format: 'currency' },
-  { key: 'dispatchRate',        label: 'Dispatch Rate',      icon: Gauge,       accent: 'blue',   format: 'pct'      },
+// All stat definitions
+const ALL_STAT_DEFS = [
+  { key: 'totalVehicles',       label: 'Total Vehicles',     icon: Car,         accent: 'blue'                    },
+  { key: 'activeTrips',         label: 'Active Trips',       icon: Map,         accent: 'green'                   },
+  { key: 'availableDrivers',    label: 'Avail. Drivers',     icon: Users,       accent: 'green'                   },
+  { key: 'maintenanceAlerts',   label: 'Maint. Alerts',      icon: Wrench,      accent: 'red'                     },
+  { key: 'completedTripsToday', label: 'Trips Today',        icon: CheckCircle, accent: 'green'                   },
+  { key: 'fuelSpendThisWeek',   label: 'Fuel Spend (7d)',    icon: Fuel,        accent: 'amber', format: 'currency' },
+  { key: 'dispatchRate',        label: 'Dispatch Rate',      icon: Gauge,       accent: 'blue',  format: 'pct'     },
 ];
+
+// Role-specific stat card configurations
+const DRIVER_STAT_KEYS  = ['completedTripsToday', 'fuelSpendThisWeek'];
+const SAFETY_STAT_KEYS  = ['totalVehicles', 'availableDrivers', 'maintenanceAlerts', 'activeTrips'];
+const ANALYST_STAT_KEYS = ['totalVehicles', 'activeTrips', 'fuelSpendThisWeek', 'dispatchRate'];
 
 function formatValue(raw, fmt) {
   if (raw == null) return '—';
@@ -34,6 +40,23 @@ export default function Dashboard() {
   const { role, user } = useAuth();
   const { stats, overdue, upcoming, loading } = useDashboard();
   const roleInfo = ROLE_DETAILS?.[role] ?? {};
+
+  const driver  = isDriver(role);
+  const safety  = isSafety(role);
+  const analyst = isAnalyst(role);
+
+  // Filter stats based on role
+  const statDefs =
+    driver  ? ALL_STAT_DEFS.filter(d => DRIVER_STAT_KEYS.includes(d.key))  :
+    safety  ? ALL_STAT_DEFS.filter(d => SAFETY_STAT_KEYS.includes(d.key))  :
+    analyst ? ALL_STAT_DEFS.filter(d => ANALYST_STAT_KEYS.includes(d.key)) :
+    ALL_STAT_DEFS;
+
+  const heroSubtitle =
+    driver  ? "Here's your trip summary and fuel spend for today." :
+    safety  ? "Here's the latest fleet maintenance and safety status." :
+    analyst ? "Here's the financial and operational performance summary." :
+    "Here's what's happening with your fleet today.";
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -69,7 +92,7 @@ export default function Dashboard() {
             <span style={{ color: '#16A34A' }}>{user?.name?.split(' ')[0] || 'User'}!</span>
           </h1>
           <p className="text-sm" style={{ color: '#64748B' }}>
-            Here's what's happening with your fleet today.
+            {heroSubtitle}
           </p>
 
           {/* Role badge */}
@@ -86,7 +109,7 @@ export default function Dashboard() {
           </span>
         </div>
 
-        {/* Live active trips counter */}
+        {/* Live active trips / alerts counter */}
         <div
           className="relative z-10 rounded-2xl p-4 min-w-[170px] flex items-center justify-between gap-4 shrink-0"
           style={{
@@ -97,10 +120,10 @@ export default function Dashboard() {
         >
           <div>
             <p className="text-[10px] uppercase font-bold tracking-widest mb-1" style={{ color: '#94A3B8' }}>
-              Active Trips
+              {driver ? 'My Trips' : safety ? 'Maint. Alerts' : 'Active Trips'}
             </p>
             <p className="font-mono text-3xl font-bold" style={{ color: '#0F172A' }}>
-              {loading ? '—' : stats?.activeTrips ?? '—'}
+              {loading ? '—' : safety ? stats?.maintenanceAlerts ?? '—' : stats?.activeTrips ?? '—'}
             </p>
           </div>
           <div
@@ -113,10 +136,10 @@ export default function Dashboard() {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4">
+      <div className={`grid gap-4 ${statDefs.length <= 2 ? 'grid-cols-2 max-w-md' : statDefs.length <= 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2 md:grid-cols-4 xl:grid-cols-7'}`}>
         {loading
-          ? Array.from({ length: 7 }).map((_, i) => <StatsCardSkeleton key={i} />)
-          : STAT_DEFS.map(def => (
+          ? Array.from({ length: statDefs.length }).map((_, i) => <StatsCardSkeleton key={i} />)
+          : statDefs.map(def => (
               <StatsCard
                 key={def.key}
                 label={def.label}

@@ -22,7 +22,7 @@ router.delete('/:id', authenticate, authorize('fleet_manager'), deleteDriver);
 // Fleet manager and safety officer can update
 router.put('/:id', authenticate, authorize('fleet_manager', 'safety_officer'), updateDriver);
 
-// Only safety officer can suspend
-router.patch('/:id/suspend', authenticate, authorize('safety_officer'), suspendDriver);
+// Fleet manager and safety officer can suspend
+router.patch('/:id/suspend', authenticate, authorize('fleet_manager', 'safety_officer'), suspendDriver);
 
 module.exports = router;

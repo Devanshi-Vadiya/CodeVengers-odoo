@@ -12,16 +12,16 @@ const router = express.Router();
 // All maintenance routes require authentication
 router.use(authenticate);
 
-// Get all maintenance logs (fleet_manager and financial_analyst) - optional filters: status, vehicle_id
-router.get('/', authorize('fleet_manager', 'financial_analyst'), getAllMaintenance);
+// Get all maintenance logs (fleet_manager, safety_officer, and financial_analyst) - optional filters: status, vehicle_id
+router.get('/', authorize('fleet_manager', 'safety_officer', 'financial_analyst'), getAllMaintenance);
 
-// Get maintenance log by id (fleet_manager only)
-router.get('/:id', authorize('fleet_manager'), getMaintenanceById);
+// Get maintenance log by id (fleet_manager and safety_officer)
+router.get('/:id', authorize('fleet_manager', 'safety_officer'), getMaintenanceById);
 
-// Create maintenance log (fleet_manager only)
-router.post('/', authorize('fleet_manager'), createMaintenance);
+// Create maintenance log (fleet_manager and safety_officer)
+router.post('/', authorize('fleet_manager', 'safety_officer'), createMaintenance);
 
-// Close maintenance log (fleet_manager only) - requires closing_notes
-router.patch('/:id/close', authorize('fleet_manager'), closeMaintenance);
+// Close maintenance log (fleet_manager and safety_officer) - requires closing_notes
+router.patch('/:id/close', authorize('fleet_manager', 'safety_officer'), closeMaintenance);
 
 module.exports = router;

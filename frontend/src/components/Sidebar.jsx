@@ -17,7 +17,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-16 flex flex-col shrink-0 font-sans z-20 select-none"
+      className="w-60 flex flex-col shrink-0 font-sans z-20 select-none"
       style={{
         backgroundColor: '#FFFFFF',
         borderRight: '1px solid #E2E8F0',
@@ -25,7 +25,7 @@ export default function Sidebar() {
       }}
     >
       {/* Navigation items */}
-      <nav className="flex-1 px-2 py-4 overflow-y-auto flex flex-col items-center gap-1.5">
+      <nav className="flex-1 px-3 py-4 overflow-y-auto flex flex-col gap-1.5">
         {navItems.map(item => {
           const Icon = item.icon;
           const isActive =
@@ -33,80 +33,75 @@ export default function Sidebar() {
             (pathname === '/' && item.href === '/dashboard');
 
           return (
-            <div key={item.href} className="relative group flex items-center justify-center w-full">
-              <Link
-                to={item.href}
-                className="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-150 focus:outline-none"
+            <Link
+              key={item.href}
+              to={item.href}
+              className="w-full h-11 px-3 rounded-xl flex items-center gap-3 transition-all duration-150 focus:outline-none"
+              style={
+                isActive
+                  ? {
+                      backgroundColor: ACCENT_BG,
+                      color: ACCENT_TEXT,
+                      boxShadow: '0 2px 6px rgba(34,197,94,0.15)',
+                    }
+                  : {
+                      color: '#64748B',
+                    }
+              }
+              onMouseEnter={e => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = '#F8FAFC';
+                  e.currentTarget.style.color = '#0F172A';
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#64748B';
+                }
+              }}
+            >
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150"
                 style={
                   isActive
-                    ? {
-                        backgroundColor: ACCENT_BG,
-                        color: ACCENT_TEXT,
-                        boxShadow: '0 2px 6px rgba(34,197,94,0.15)',
-                      }
-                    : {
-                        color: '#94A3B8',
-                      }
+                    ? { backgroundColor: ACCENT, color: '#FFFFFF' }
+                    : { backgroundColor: 'transparent' }
                 }
-                onMouseEnter={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = '#F8FAFC';
-                    e.currentTarget.style.color = '#0F172A';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#94A3B8';
-                  }
-                }}
               >
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-150"
-                  style={
-                    isActive
-                      ? { backgroundColor: ACCENT, color: '#FFFFFF' }
-                      : { backgroundColor: 'transparent' }
-                  }
-                >
-                  {Icon && <Icon className="w-4 h-4" />}
-                </div>
-              </Link>
-
-              {/* Tooltip on hover */}
-              <div className="absolute left-14 z-50 hidden group-hover:flex items-center px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-medium whitespace-nowrap shadow-md pointer-events-none animate-in fade-in slide-in-from-left-1 duration-150">
-                {item.name}
+                {Icon && <Icon className="w-4 h-4" />}
               </div>
-            </div>
+              <span className="text-sm font-semibold truncate tracking-tight">
+                {item.name}
+              </span>
+            </Link>
           );
         })}
       </nav>
 
       {/* Logout button at bottom */}
-      <div style={{ borderTop: '1px solid #E2E8F0' }} className="p-2 pb-3 flex flex-col items-center">
-        <div className="relative group flex items-center justify-center w-full">
-          <button
-            onClick={handleLogout}
-            aria-label="Sign Out"
-            className="w-11 h-11 rounded-xl flex items-center justify-center transition-all focus:outline-none"
-            style={{ color: '#CBD5E1' }}
-            onMouseEnter={e => {
-              e.currentTarget.style.backgroundColor = '#FEF2F2';
-              e.currentTarget.style.color = '#EF4444';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#CBD5E1';
-            }}
-          >
-            <LogOut className="w-4.5 h-4.5" />
-          </button>
-
-          {/* Tooltip */}
-          <div className="absolute left-14 z-50 hidden group-hover:flex items-center px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-medium whitespace-nowrap shadow-md pointer-events-none animate-in fade-in slide-in-from-left-1 duration-150">
-            Sign Out
+      <div style={{ borderTop: '1px solid #E2E8F0' }} className="p-3">
+        <button
+          onClick={handleLogout}
+          aria-label="Sign Out"
+          className="w-full h-11 px-3 rounded-xl flex items-center gap-3 transition-all focus:outline-none"
+          style={{ color: '#94A3B8' }}
+          onMouseEnter={e => {
+            e.currentTarget.style.backgroundColor = '#FEF2F2';
+            e.currentTarget.style.color = '#EF4444';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = '#94A3B8';
+          }}
+        >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
+            <LogOut className="w-4 h-4" />
           </div>
-        </div>
+          <span className="text-sm font-semibold truncate tracking-tight">
+            Sign Out
+          </span>
+        </button>
       </div>
     </aside>
   );
