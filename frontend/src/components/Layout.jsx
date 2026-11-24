@@ -79,11 +79,11 @@ export default function Layout() {
           borderBottom: '1px solid #E2E8F0',
           boxShadow: '0 1px 4px rgba(15,23,42,0.05)',
         }}
-        className="h-14 flex items-center shrink-0 z-30 px-4 gap-4"
+        className="h-14 flex items-center shrink-0 z-30 pr-4 gap-4"
       >
-        {/* Brand logo — same width as sidebar */}
+        {/* Brand logo — matches width of sidebar */}
         <div
-          className="w-16 flex items-center justify-center shrink-0"
+          className="w-60 h-full flex items-center px-4 gap-3 shrink-0"
           style={{ borderRight: '1px solid #E2E8F0' }}
         >
           <div
@@ -95,6 +95,9 @@ export default function Layout() {
           >
             <Car className="w-4 h-4 text-white" />
           </div>
+          <span className="font-bold text-base text-slate-800 tracking-tight">
+            Transit<span style={{ color: ACCENT }}>Ops</span>
+          </span>
         </div>
 
         {/* ── Search bar (functional) ── */}
